@@ -1,4 +1,4 @@
-request_id,request_type,text_jobs,text_student,meta_date,meta_accountrep
-1,train,0.54,0.04,0.23,0.99
-2,test,0.04,0.02,0.99,0.51
-3,train,0.55,0.77,0.83,0.4
+request_id,request_type,received_pizza,text_jobs,text_student,meta_date,meta_accountrep
+1,train,False,0.54,0.04,0.23,0.99
+2,test,False,0.04,0.02,0.99,0.51
+3,train,True,0.55,0.77,0.83,0.4
