@@ -3,7 +3,7 @@ from random import random
 from pprint import pprint
  
 class Agent(object):
-    score = None
+    score = -1
 
     """
     Create a new instance of Agent using values for its weights and thresholds if it is passed in, otherwise using random values.
@@ -19,6 +19,16 @@ class Agent(object):
         self.values = values
         
         #pprint("New Agent: %s" % values)
+    
+    # How agents are represented in interactive prompt
+    def __repr__(self):
+        return "<Agent id:%s gen:%s score:%s vals:%s>" \
+            % (self.id, self.generation, self.score, self.values)
+
+    # How agents are represented when printing
+    def __str__(self):
+        return "<Agent id:%s gen:%s score:%s vals:%s>" \
+            % (self.id, self.generation, self.score, self.values)
         
     """
     create randomized values for all weights and thresholds
