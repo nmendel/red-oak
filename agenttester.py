@@ -2,6 +2,7 @@
 import json
 import codecs
 
+
 """
 FIXME Finish implementing and testing
 """
@@ -38,11 +39,13 @@ class AgentTester():
     Evaluates the passed request using the given agent, adds whether or not the request was actually successful, and generates a result
     """
     def evaluate(self, agent, request):
-        testResult = TestResult()
-        testResult.key = request.key
-        testResult.predicted = agent.scoreRequest(request)
-        testResult.actual = request.wasSuccessful
+        #FIXME Replace request_id and received_pizza with field names for scored requests
+        key = request.request_id
+        predicted = agent.scoreRequest(request)
+        actual = request.requester_received_pizza
+        testResult = TestResult(key, predicted, actual)
         return testResult
+
 
 """
 class to hold the result of an agent test
@@ -56,3 +59,19 @@ class TestResult():
         self.key = key
         self.predicted = predicted
         self.actual = actual
+
+"""
+Dummy Agent to test functionality
+"""
+class DummyAgent():
+    def scoreRequest(self, request):
+        return True
+
+
+
+if __name__ == '__main__':
+    agentTester = AgentTester()
+    #FIXME Replace with ScoredRequest Test File
+    path = './pizza_request_dataset/kfold0/test_data_fold0.json'
+    agent = DummyAgent()
+    print agentTester.testAgentOnFile(agent, path)
