@@ -2,18 +2,22 @@
 import json
 import codecs
 
-#TODO Finish implementing and testing
+"""
+FIXME Finish implementing and testing
+"""
 class AgentTester():
     def testAgentOnFile(self, agent, testfile):
         dataset = self.read_dataset(testfile)
         results = self.testAgent(agent, dataset)
         return results
 
+
+    """
+    test agent on data to generate result list
+    """
     def testAgent(self, agent, testdata):
         results = []
 
-        #test agent on data
-        #to generate result list
         for testdatum in testdata:
             result = self.evaluate(agent, testdatum)
             results.append(result)
@@ -21,21 +25,28 @@ class AgentTester():
         return results
 
 
+    """
+    Function to read data from a file to a json dataset
+    """
     def read_dataset(self, path):
         with codecs.open(path, 'r', 'utf-8') as myFile:
             content = myFile.read()
         dataset = json.loads(content)
         return dataset
 
-    #TODO implement
-    def evaluate(self, agent, testdatum):
+    """
+    Evaluates the passed request using the given agent, adds whether or not the request was actually successful, and generates a result
+    """
+    def evaluate(self, agent, request):
         testResult = TestResult()
-        testResult.key = testdatum.key
-        testResult.predicted = 0
-        testResult.actual = testdatum.wasSuccessful
+        testResult.key = request.key
+        testResult.predicted = agent.scoreRequest(request)
+        testResult.actual = request.wasSuccessful
         return testResult
 
-#class to hold the result of an agent test
+"""
+class to hold the result of an agent test
+"""
 class TestResult():
     key = -1
     predicted = -1
