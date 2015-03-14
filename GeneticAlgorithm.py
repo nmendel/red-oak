@@ -5,9 +5,9 @@ import csv
 import json
 from pprint import pprint
 
+import Constants as C
 from Agent import Agent
 
-AGENT_HEADER_IGNORE = ['request_id', 'request_type', 'received_pizza']
 DEFAULT_NUM_TEAMS = 30
 
 
@@ -33,7 +33,7 @@ class GeneticAlgorithm(object):
         self.cacheRequests(reader, header)
         fh.close()
         
-        for field in AGENT_HEADER_IGNORE:
+        for field in C.AGENT_HEADER_IGNORE:
             header.remove(field)
             
         self.agentHeader = header

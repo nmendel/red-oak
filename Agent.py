@@ -1,8 +1,14 @@
 
-from random import random
+from random import random, uniform
 from pprint import pprint
  
+import Constants as C
+
+
+ 
 class Agent(object):
+
+
     score = -1
 
     """
@@ -17,6 +23,7 @@ class Agent(object):
             values = self.generateValues()
         
         self.values = values
+        self.maxScore = self.getMaxScore()
         
         #pprint("New Agent: %s" % values)
     
@@ -36,18 +43,58 @@ class Agent(object):
     def generateValues(self):
         values = {}
         for field in self.fields:
-            values['%s_weight' % field] = round(random(), 2)
-            values['%s_thresh' % field] = round(random(), 2)
+            values['%s_%s' % (field, C.WEIGHT)] = round(random(), 2)
+            values['%s_%s' % (field, C.THRESH)] = round(random(), 2)
+            
+        values['%s_%s' % (C.PIZZA, C.THRESH)] = round(uniform(0, C.MAX_PIZZA_THRESH), 2)
         
         return values
+	
+    """
+    Loop through self.values and get 
+    """
+    def getMaxScore(self):
+        maxScore = 0.0
+        for key, value in self.values.iteritems():
+            if key.endswith('_' + C.WEIGHT):
+                maxScore += value
         
+        return maxScore
+	
     """
     Scores a request based on the request's values and the agent's values and returns a boolean on whether the Agent thinks the request will be pizza'd
     """
-    # TODO: implement
     def scoreRequest(self, request):
-        return True
+        totalScore = 0.0
+        numKeys = 0
+                
+        for key, value in request.iteritems():
+            if key in C.AGENT_HEADER_IGNORE:
+                continue
+                
+            value = float(value)
+            numKeys += 1
+            thresh = self.values.get(threshLabel(key), 1)
+            weight = self.values.get(weightLabel(key), 0)
+            
+            if value >= thresh:
+                totalScore += value * weight
+        
+        requestScore = (totalScore / self.maxScore)
+        receivesPizza = requestScore >= self.values.get(threshLabel(C.PIZZA), 1)
+        
+        #print 'Total Score: %s, %s, %s, %s' \
+        #    % (totalScore, requestScore, self.values['pizza_thresh'], receivesPizza)
+        
+        return receivesPizza
     
+    
+def weightLabel(key):
+    return '%s_%s' % (key, C.WEIGHT)
+
+def threshLabel(key):
+    return '%s_%s' % (key, C.THRESH)
+
 
 """
 returns an instance of an Agent given its ID in the datastore (how this is done is obviously dependent on how our datastore works).  In other words, look up values in the db and return Agent(values).
