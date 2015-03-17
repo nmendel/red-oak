@@ -1,7 +1,7 @@
 # Store global constants in this file
 
 # Tweakable values
-MUTATION_CONSTANT = '???'
+MUTATION_CONSTANT = 33
 MAX_PIZZA_THRESH = 1.0
 
 AGENT_HEADER_IGNORE = ['request_id', 'request_type', 'received_pizza']

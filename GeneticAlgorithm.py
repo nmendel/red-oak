@@ -1,5 +1,7 @@
 # This module will contain functionality to train agents genetically
 
+import random
+from random import randint
 import sys
 import csv
 import json
@@ -154,9 +156,12 @@ class GeneticAlgorithm(object):
     """
     Loop through all of the weights and thresholds of the Agent and mutate them if a randomly generated number is less than the mutation constant (a constant for the GeneticAlgorithm that we can tweak between, but not during, runs)
     """
-    # TODO: implement
     def mutate(self, agent):
-        pass
+        for value in agent.values:
+            x = randint(0, 100)
+            if x < C.MUTATION_CONSTANT:
+                agent.values[value] = round(random(), 2)
+
         
     """
     Save the generation to disk or db in whatever way we decide to store them
@@ -187,18 +192,17 @@ if __name__=='__main__':
     else:
         # score data file, currently assumed to be a csv file
         dataFile = sys.argv[1]
-        
+
         # how many teams per generation
         numTeams = DEFAULT_NUM_TEAMS
         if len(sys.argv) == 3:
             numTeams = sys.argv[2]
-            
+
         # how many generations to run for
         numGenerations = 0
         if len(sys.argv) == 4:
             numGenerations = sys.argv[3]
-        
+
         # run the genetic algorithm
         ga = GeneticAlgorithm(dataFile, numTeams, numGenerations)
         ga.main()
-    
