@@ -166,7 +166,27 @@ class GeneticAlgorithm(object):
     # TODO: implement
     def breed(self, agent1, agent2):
         self.agentID += 1
-        return Agent(self.agentID, self.genNumber, self.agentHeader)
+        newValues= {}
+        newVals= []
+        a1= []
+        a2= []
+        for value in agent1.values:
+            a1.append(value)
+
+        for value in agent2.values:
+            a2.append(value)
+
+        for value in a1:
+            x = randint(0, 1)
+            if x == 0:
+                newVals.append(a1[a1.index(value)])
+            else:
+                newVals.append(a2[a1.index(value)])
+                
+        for value in newVals:
+            newValues.add(value)
+
+        return Agent(self.agentID, self.genNumber, self.agentHeader, newValues)
     
     """
     Loop through all of the weights and thresholds of the Agent and mutate them if a randomly generated number is less than the mutation constant (a constant for the GeneticAlgorithm that we can tweak between, but not during, runs)
