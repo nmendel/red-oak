@@ -38,6 +38,17 @@ class Agent(object):
             % (self.id, self.generation, self.score, self.values)
         
     """
+    Return all of the agent's information in a list.  Used to write out agents to csv files.
+    """
+    def getAllInfo(self):
+        vals = [self.id, self.generation, self.score]
+        for field in self.fields:
+            vals.append(self.values[weightLabel(field)])
+            vals.append(self.values[threshLabel(field)])
+            
+        return vals
+        
+    """
     create randomized values for all weights and thresholds
     """
     def generateValues(self):

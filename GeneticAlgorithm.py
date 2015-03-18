@@ -1,10 +1,11 @@
 # This module will contain functionality to train agents genetically
 
-import random
-from random import randint
+from random import randint, random
 import sys
+import os
 import csv
 import json
+from datetime import datetime
 from pprint import pprint
 
 import Constants as C
@@ -39,6 +40,20 @@ class GeneticAlgorithm(object):
             header.remove(field)
             
         self.agentHeader = header
+        
+        logfolder = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'logs')
+        
+        if not os.path.exists(logfolder):
+            os.makedirs(logfolder)
+        
+        # setup csv log to write all agents to
+        logfile = "RAOP-%s.log" % datetime.now().strftime('%Y%m%d%H%M%S')
+        logfile = os.path.join(logfolder, logfile)
+        self.log_fh = open(logfile, 'w')
+        self.log = csv.writer(self.log_fh)
+        
+        # write out the header row
+        self.log.writerow(['ID', 'Gen', 'Score'] + self.agentHeader)
         
         print "Running genetic algorithm with %s agents for %s generations using data file %s" \
                 % (self.numAgents, self.numGenerations, self.dataFile)
@@ -164,11 +179,12 @@ class GeneticAlgorithm(object):
 
         
     """
-    Save the generation to disk or db in whatever way we decide to store them
+    Save the generation to disk in the csv log file
     """
-    # TODO: implement
     def archiveGeneration(self, generation):
-        pass
+        for agent in generation:
+            agentInfo = agent.getAllInfo()
+            self.log.writerow(agentInfo)
         
     """
     Loop through the csv reader, create a dict of data for each request, and keep it in either
