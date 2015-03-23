@@ -176,15 +176,18 @@ class GeneticAlgorithm(object):
         for value in agent2.values:
             a2.append(value)
 
-        for value in a1:
+        for key in agent1.values:
+        #for value in a1:
             x = randint(0, 1)
             if x == 0:
-                newVals.append(a1[a1.index(value)])
+                newValues[key]= agent1.values.get(key)
+                #newVals.append(a1[a1.index(value)])
             else:
-                newVals.append(a2[a1.index(value)])
+                newValues[key]= agent2.values.get(key)
+                #newVals.append(a2[a1.index(value)])
                 
-        for value in newVals:
-            newValues.add(value)
+        #for value in newVals:
+        #    newValues.add(value)
 
         return Agent(self.agentID, self.genNumber, self.agentHeader, newValues)
     
