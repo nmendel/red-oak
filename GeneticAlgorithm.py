@@ -149,8 +149,9 @@ class GeneticAlgorithm(object):
         #picking a score based on it's weighted value
         def pickbasedonscoreweight(dictionary):
             sumscores = 0.0
+            #random number from 0 to sum of scores
             randomnum = random.uniform(0, sum(dictionary.itervalues()))
-    
+            #looping through dictionary
             for key, values in dictionary.iteritems():
                 sumscores += values
                 if sumscores > randomnum: 
