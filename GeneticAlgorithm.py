@@ -138,16 +138,34 @@ class GeneticAlgorithm(object):
     """
     # TODO: implement
     def breedGeneration(self, generation):
-        agents = []
+        agents = []        
+        agentscores = {}
         
-        # TODO: get the scores from all of the agents and put them in a data structure
-        #       that makes it easy to select parents based on their scores
-        # something like this maybe: http://stackoverflow.com/questions/2570690/python-algorithm-to-randomly-select-a-key-based-on-proportionality-weight
-        parents = {}
-        # TODO: implement, Note: the parents variable is visible in the scope of this function
+        #getting all scores and putting into a dictionary
+        #keys will be agent id's and value will agent.score
+        for agent in generation:
+             agentscores[agent.id] = agent.score
+        
+        #picking a score based on it's weighted value
+        def pickbasedonscoreweight(dictionary):
+            sumscores = 0.0
+            randomnum = random.uniform(0, sum(dictionary.itervalues()))
+    
+            for key, values in dictionary.iteritems():
+                sumscores += values
+                if sumscores > randomnum: 
+                   return key
+            return key
+        
+        #using the weightedvalue scorer to choose the key then finding which key that belongs to
+        #aka finding the agent that has that id and returning it
         def selectAgent():
-            return None
-        
+             key = pickbasedonscoreweight(agentscores)
+             for agent in generation:
+                if key == agent.id:
+                   return agent
+             return agent
+         
         # breed the new agents, selecting parents based on their success rates
         for _ in range(self.numAgents):
             agent1 = selectAgent()
