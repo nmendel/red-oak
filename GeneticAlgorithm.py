@@ -1,6 +1,6 @@
 # This module will contain functionality to train agents genetically
 
-from random import randint, random
+from random import randint, random, uniform
 import sys
 import os
 import csv
@@ -9,7 +9,7 @@ from datetime import datetime
 from pprint import pprint
 
 import Constants as C
-from Agent import Agent
+from Agent import Agent, weightLabel, threshLabel
 
 DEFAULT_NUM_TEAMS = 30
 
@@ -136,25 +136,26 @@ class GeneticAlgorithm(object):
     """
     Uses the results to determine percentage chance that each Agent will be chosen as a parent.  Create numAgents new agents by calling self.breed on 2 parents numAgents times.  Then call self.mutate on each new Agent.
     """
-    # TODO: implement
     def breedGeneration(self, generation):
         agents = []        
         agentscores = {}
+        agentsById = {}
         
         #getting all scores and putting into a dictionary
         #keys will be agent id's and value will agent.score
         for agent in generation:
              agentscores[agent.id] = agent.score
+             agentsById[agent.id] = agent
         
         #picking a score based on it's weighted value
         def pickbasedonscoreweight(dictionary):
             sumscores = 0.0
             #random number from 0 to sum of scores
-            randomnum = random.uniform(0, sum(dictionary.itervalues()))
+            randomnum = uniform(0, sum(dictionary.itervalues()))
             #looping through dictionary
             for key, values in dictionary.iteritems():
                 sumscores += values
-                if sumscores > randomnum: 
+                if sumscores >= randomnum: 
                    return key
             return key
         
@@ -162,10 +163,7 @@ class GeneticAlgorithm(object):
         #aka finding the agent that has that id and returning it
         def selectAgent():
              key = pickbasedonscoreweight(agentscores)
-             for agent in generation:
-                if key == agent.id:
-                   return agent
-             return agent
+             return agentsById[key]
          
         # breed the new agents, selecting parents based on their success rates
         for _ in range(self.numAgents):
@@ -182,33 +180,21 @@ class GeneticAlgorithm(object):
     """
     Breed the 2 passed in Agents together to create and return a new Agent.  Use a single crossover point in the values of the 2 agents, with the first n values coming from the first agent and the rest coming from the second.
     """
-    # TODO: implement
     def breed(self, agent1, agent2):
         self.agentID += 1
         newValues= {}
-        newVals= []
-        a1= []
-        a2= []
-        for value in agent1.values:
-            a1.append(value)
 
-        for value in agent2.values:
-            a2.append(value)
-
-        for key in agent1.values:
-        #for value in a1:
+        for key in self.agentHeader:
             x = randint(0, 1)
             if x == 0:
-                newValues[key]= agent1.values.get(key)
-                #newVals.append(a1[a1.index(value)])
+                newValues[weightLabel(key)] = agent1.values.get(weightLabel(key))
+                newValues[threshLabel(key)] = agent1.values.get(threshLabel(key))
             else:
-                newValues[key]= agent2.values.get(key)
-                #newVals.append(a2[a1.index(value)])
+                newValues[weightLabel(key)] = agent2.values.get(weightLabel(key))
+                newValues[threshLabel(key)] = agent2.values.get(threshLabel(key))
                 
-        #for value in newVals:
-        #    newValues.add(value)
-
         return Agent(self.agentID, self.genNumber, self.agentHeader, newValues)
+        
     
     """
     Loop through all of the weights and thresholds of the Agent and mutate them if a randomly generated number is less than the mutation constant (a constant for the GeneticAlgorithm that we can tweak between, but not during, runs)
