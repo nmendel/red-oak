@@ -56,11 +56,18 @@ class RequestInfo():
             for word in words:
                 if lex == word:
                     desire += 1
+        #[1, 2, 3, 4, 1, 4, 1].count(1)
+        total = student + money + job + family + desire
 
-        nar = {'student': student, 'money': money, 'job': job,
-               'family': family, 'desire': desire}
-        narrative = max(nar, key=nar.get)
-        return self.NARRATIVES[narrative]
+        if total > 0:
+            nar = {'student': (student/total), 'money': (money/total), 'job': (job/total),
+                   'family': (family/total), 'desire': (desire/total)}
+        else:
+            nar = {'student': 0, 'money': 0, 'job': 0,
+                   'family': 0, 'desire': 0}
+        #narrative = max(nar, key=nar.get)
+        #return self.NARRATIVES[narrative]
+        return nar
 
         
             
