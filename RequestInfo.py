@@ -1,5 +1,8 @@
 #Request Info
+
+
 class RequestInfo():
+    num_words_score = 0
     NARRATIVES = {'student': .232, 'money': .323,
                   'job': .319,'family': .235,'desire': .17}
     STUDENT = ['college', 'student', 'university', 'finals', 'study',
@@ -15,7 +18,7 @@ class RequestInfo():
     FAMILY = ['husband','wife','family','parent','parents','mother','father','mom','mum','son','dad','daughter']
     DESIRE = ['friend','party','birthday','boyfriend','girlfriend','date','drinks','drunk','wasted','invite',
               'invited','celebrate','celebrating','game','games','movie','beer','crave','craving']
-    
+
     def __init__(self, request_data):
         self.info = request_data
 
@@ -27,6 +30,15 @@ class RequestInfo():
     def score_narrative(self):
         text = self.info['request_text']
         words = text.lower().split()
+
+        ############
+        #Score metadata
+
+        #Count words in title to add to total text
+        title_text = self.info['request_title']
+        title_words = title_text.lower().split()
+        self.num_words_score = self.score_num_words(words, title_words)
+
         student = 0
         for lex in self.STUDENT:
             for word in words:
@@ -67,7 +79,23 @@ class RequestInfo():
                    'family': 0, 'desire': 0}
         #narrative = max(nar, key=nar.get)
         #return self.NARRATIVES[narrative]
+
+
+
         return nar
+
+    def score_num_words(self, words, title_words):
+        #After testing, 400 seemed to be a good value for max length. While there are a few posts with much higher
+        #word counts, they appear to be outliers
+        max_length = 400
+        num_words = len(words) + len(title_words)
+        score = float(num_words)/max_length
+
+        if score > 1: score = 1
+
+        return score
+
+
 
         
             
