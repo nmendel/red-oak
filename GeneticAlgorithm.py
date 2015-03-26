@@ -32,7 +32,7 @@ class GeneticAlgorithm(object):
         
         fh = open(self.dataFile, 'r')
         reader = csv.reader(fh)
-        header = reader.next()
+        header = reader.__next__()
         self.cacheRequests(reader, header)
         fh.close()
         
@@ -49,14 +49,14 @@ class GeneticAlgorithm(object):
         # setup csv log to write all agents to
         logfile = "RAOP-%s.log" % datetime.now().strftime('%Y%m%d%H%M%S')
         logfile = os.path.join(logfolder, logfile)
-        self.log_fh = open(logfile, 'w')
+        self.log_fh = open(logfile, 'w', newline='')
         self.log = csv.writer(self.log_fh)
         
         # write out the header row
         self.log.writerow(['ID', 'Gen', 'Score'] + self.agentHeader)
         
-        print "Running genetic algorithm with %s agents for %s generations using data file %s" \
-                % (self.numAgents, self.numGenerations, self.dataFile)
+        print("Running genetic algorithm with %s agents for %s generations using data file %s" \
+                % (self.numAgents, self.numGenerations, self.dataFile))
 
     """
     runs the genetic algorithm for self.numGenerations generations, running indefinitely if it is 0
@@ -151,9 +151,9 @@ class GeneticAlgorithm(object):
         def pickbasedonscoreweight(dictionary):
             sumscores = 0.0
             #random number from 0 to sum of scores
-            randomnum = uniform(0, sum(dictionary.itervalues()))
+            randomnum = uniform(0, sum(dictionary.values()))
             #looping through dictionary
-            for key, values in dictionary.iteritems():
+            for key, values in dictionary.items():
                 sumscores += values
                 if sumscores >= randomnum: 
                    return key
@@ -228,7 +228,7 @@ class GeneticAlgorithm(object):
                 self.trainingRequests.append(data)
 
 def usage():
-    print 'Usage:\nGeneticAlgorithm.py dataFile.csv [numTeamsPerRound] [numGenerations]'
+    print('Usage:\nGeneticAlgorithm.py dataFile.csv [numTeamsPerRound] [numGenerations]')
 
 if __name__=='__main__':
     if len(sys.argv) < 3:

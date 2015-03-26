@@ -66,7 +66,7 @@ class Agent(object):
     """
     def getMaxScore(self):
         maxScore = 0.0
-        for key, value in self.values.iteritems():
+        for key, value in self.values.items():
             if key.endswith('_' + C.WEIGHT):
                 maxScore += value
         
@@ -79,7 +79,7 @@ class Agent(object):
         totalScore = 0.0
         numKeys = 0
                 
-        for key, value in request.iteritems():
+        for key, value in request.items():
             if key in C.AGENT_HEADER_IGNORE:
                 continue
                 
