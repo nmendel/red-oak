@@ -72,8 +72,8 @@ class RequestInfo():
         total = student + money + job + family + desire
 
         if total > 0:
-            nar = {'student': (student/total), 'money': (money/total), 'job': (job/total),
-                   'family': (family/total), 'desire': (desire/total)}
+            nar = {'student': (float(student)/total), 'money': (float(money)/total), 'job': (float(job)/total),
+                   'family': (float(family)/total), 'desire': (float(desire)/total)}
         else:
             nar = {'student': 0, 'money': 0, 'job': 0,
                    'family': 0, 'desire': 0}
