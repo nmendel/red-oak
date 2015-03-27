@@ -24,7 +24,9 @@ def write_csv(dataset):
     for datnum in dataset:
         reqI = RequestInfo(datnum)
         req = reqI.score_narrative()
-        swriter.writerow([datnum['request_id'], datnum['requester_received_pizza'], req['student'], req['money'], req['job'], req['family'], req['desire'], reqI.num_words_score])
+        swriter.writerow([datnum['request_id'],
+                          datnum['requester_received_pizza'], req['student'], req['money'], req['job'], req['family'], req['desire'],
+                          reqI.score_request_length()])
         
 if __name__ == '__main__':
     path = './pizza_request_dataset/pizza_request_dataset.json'

@@ -2,7 +2,6 @@
 
 
 class RequestInfo():
-    num_words_score = 0
     NARRATIVES = {'student': .232, 'money': .323,
                   'job': .319,'family': .235,'desire': .17}
     STUDENT = ['college', 'student', 'university', 'finals', 'study',
@@ -27,17 +26,28 @@ class RequestInfo():
         status = self.info['requester_received_pizza']
         print(text + ' ' + str(status))
 
-    def score_narrative(self):
-        text = self.info['request_text']
-        words = text.lower().split()
 
-        ############
-        #Score metadata
+    def score_request_length(self):
+        #After testing, 400 seemed to be a good value for max length. While there are a few posts with much higher
+        #word counts, they appear to be outliers
+        max_length = 400
+        text = self.info['request_text']
+        text_words = text.lower().split()
 
         #Count words in title to add to total text
         title_text = self.info['request_title']
-        title_words = title_text.lower().split()
-        self.num_words_score = self.score_num_words(words, title_words)
+        num_title_words = len(title_text.lower().split())
+        num_words = len(text_words)
+        total_words = num_words + num_title_words
+        score = float(total_words)/max_length
+
+        #return score with an upper bound of 1
+        return min(score, 1)
+
+
+    def score_narrative(self):
+        text = self.info['request_text']
+        words = text.lower().split()
 
         student = 0
         for lex in self.STUDENT:
@@ -79,21 +89,7 @@ class RequestInfo():
                    'family': 0, 'desire': 0}
         #narrative = max(nar, key=nar.get)
         #return self.NARRATIVES[narrative]
-
-
-
         return nar
-
-    def score_num_words(self, words, title_words):
-        #After testing, 400 seemed to be a good value for max length. While there are a few posts with much higher
-        #word counts, they appear to be outliers
-        max_length = 400
-        num_words = len(words) + len(title_words)
-        score = float(num_words)/max_length
-
-        if score > 1: score = 1
-
-        return score
 
 
 
