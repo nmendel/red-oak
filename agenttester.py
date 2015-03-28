@@ -37,12 +37,12 @@ class AgentTester():
 
     """
     Evaluates the passed request using the given agent, adds whether or not the request was actually successful, and generates a result
+    request should be in the format of a dict for evaluate to retrieve the values
     """
     def evaluate(self, agent, request):
-        #FIXME Replace request_id and received_pizza with field names for scored requests
-        key = request.request_id
+        key = request['id']
         predicted = agent.scoreRequest(request)
-        actual = request.requester_received_pizza
+        actual = request['received_pizza']
         testResult = TestResult(key, predicted, actual)
         return testResult
 
