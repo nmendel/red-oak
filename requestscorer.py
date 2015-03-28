@@ -20,13 +20,15 @@ def print_text(dataset):
 def write_csv(dataset):
     csvfile = open('output.csv', 'w')
     swriter = csv.writer(csvfile)
-    swriter.writerow(['id', 'received_pizza', 'student', 'money', 'job', 'family', 'desire', 'num_words'])
+    swriter.writerow(['id', 'received_pizza', 'student', 'money', 'job', 'family', 'desire', 'num_words', 'account_age', 'length_of_time_on_raop'])
     for datnum in dataset:
         reqI = RequestInfo(datnum)
         req = reqI.score_narrative()
         swriter.writerow([datnum['request_id'],
                           datnum['requester_received_pizza'], req['student'], req['money'], req['job'], req['family'], req['desire'],
-                          reqI.score_request_length()])
+                          reqI.score_request_length(),
+                          reqI.score_requester_account_age_in_days_at_request(),
+                          reqI.score_requester_days_since_first_post_on_raop_at_request()])
         
 if __name__ == '__main__':
     path = './pizza_request_dataset/pizza_request_dataset.json'
