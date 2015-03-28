@@ -90,8 +90,24 @@ class RequestInfo():
         #narrative = max(nar, key=nar.get)
         #return self.NARRATIVES[narrative]
         return nar
-
-
-
-        
-            
+  
+  
+    def score_requester_days_since_first_post_on_raop_at_request(self):
+        #most data seemed to be 0, maximum I saw was in the hundreds place
+       days= self.info['requester_days_since_first_post_on_raop_at_request']
+       if(days < 999):
+          return days/1000
+       else:
+          return 1
+    
+    
+    def score_requester_account_age_in_days_at_request(self):
+      #most data I saw was in the hundreds place, only a few that were over 1000
+    	days= self.info['requester_account_age_in_days_at_request']
+    	if(days < 999):
+          return days/1000
+    	else:
+          return 1
+  
+          
+              
