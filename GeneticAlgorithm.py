@@ -244,7 +244,7 @@ if __name__=='__main__':
 
         # how many generations to run for
         numGenerations = 0
-        if len(sys.argv) == 4:
+        if len(sys.argv) == 3:
             numGenerations = sys.argv[3]
 
         # run the genetic algorithm
