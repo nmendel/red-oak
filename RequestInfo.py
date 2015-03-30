@@ -39,7 +39,7 @@ class RequestInfo():
         num_title_words = len(title_text.lower().split())
         num_words = len(text_words)
         total_words = num_words + num_title_words
-        score = float(total_words)/max_length
+        score = round(float(total_words)/max_length, 2)
 
         #return score with an upper bound of 1
         return min(score, 1)
@@ -79,11 +79,14 @@ class RequestInfo():
                 if lex == word:
                     desire += 1
         #[1, 2, 3, 4, 1, 4, 1].count(1)
-        total = student + money + job + family + desire
-
+        total = float(student + money + job + family + desire)
+		
+        def getScore(categoryScore):
+            return round(categoryScore/total, 2)
+ 
         if total > 0:
-            nar = {'student': (float(student)/total), 'money': (float(money)/total), 'job': (float(job)/total),
-                   'family': (float(family)/total), 'desire': (float(desire)/total)}
+            nar = {'student': getScore(student), 'money': getScore(money), 'job': getScore(job),
+                   'family': getScore(family), 'desire': getScore(desire)}
         else:
             nar = {'student': 0, 'money': 0, 'job': 0,
                    'family': 0, 'desire': 0}
@@ -96,7 +99,7 @@ class RequestInfo():
         #most data seemed to be 0, maximum I saw was in the hundreds place
        days= self.info['requester_days_since_first_post_on_raop_at_request']
        if(days < 1000):
-          return days/1000
+          return round(days/float(1000), 2)
        else:
           return 1
     
@@ -105,7 +108,7 @@ class RequestInfo():
       #most data I saw was in the hundreds place, only a few that were over 1000
     	days= self.info['requester_account_age_in_days_at_request']
     	if(days < 1000):
-          return days/1000
+          return round(days/float(1000), 2)
     	else:
           return 1
   

@@ -19,9 +19,11 @@ def print_text(dataset):
 
 def write_csv(dataset):
     count = 1
-    csvfile = open('scored_pizza_request_dataset.csv', 'w')
+    csvfile = open('scored_pizza_request_dataset.csv', 'w', newline='')
     swriter = csv.writer(csvfile)
-    swriter.writerow(['id', 'received_pizza', 'student', 'money', 'job', 'family', 'desire', 'num_words', 'account_age', 'length_of_time_on_raop', 'request_type'])
+    swriter.writerow(['id', 'received_pizza', 'text_student', 'text_money',
+		'text_job', 'text_family', 'text_desire', 'meta_num_words', 
+		'meta_account_age', 'meta_length_of_time_on_raop', 'request_type'])
     for datnum in dataset:
         reqI = RequestInfo(datnum)
         req = reqI.score_narrative()
