@@ -36,7 +36,7 @@ def write_csv(dataset):
 
         #Write the data to the csv
         swriter.writerow([datnum['request_id'],
-                          datnum['requester_received_pizza'], req['student'], req['money'], req['job'], req['family'], req['desire'],
+                          str(datnum['requester_received_pizza']).lower(), req['student'], req['money'], req['job'], req['family'], req['desire'],
                           reqI.score_request_length(),
                           reqI.score_requester_account_age_in_days_at_request(),
                           reqI.score_requester_days_since_first_post_on_raop_at_request(),
