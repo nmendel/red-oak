@@ -80,7 +80,7 @@ class GeneticAlgorithm(object):
         self.runGeneration(generation, False)
         
         # report on results, pickAgent, etc...  
-        # TODO: implement this part
+        self.archiveGeneration(generation)
         pprint(generation)
 
     """
@@ -141,11 +141,20 @@ class GeneticAlgorithm(object):
         agentscores = {}
         agentsById = {}
         
+        bestAgent = None
+        bestScore = 0.0
+        
         #getting all scores and putting into a dictionary
         #keys will be agent id's and value will agent.score
         for agent in generation:
              agentscores[agent.id] = agent.score
              agentsById[agent.id] = agent
+             
+             if agent.score > bestScore:
+                bestAgent = agent
+        
+        # keep the best agent as-is for the next generation
+        agents.append(bestAgent)
         
         #picking a score based on it's weighted value
         def pickbasedonscoreweight(dictionary):
@@ -166,7 +175,7 @@ class GeneticAlgorithm(object):
              return agentsById[key]
          
         # breed the new agents, selecting parents based on their success rates
-        for _ in range(self.numAgents):
+        for _ in range(self.numAgents - 1):
             agent1 = selectAgent()
             agent2 = selectAgent()
             agents.append(self.breed(agent1, agent2))
@@ -214,6 +223,8 @@ class GeneticAlgorithm(object):
             agentInfo = agent.getAllInfo()
             self.log.writerow(agentInfo)
         
+        self.log_fh.flush()
+        
     """
     Loop through the csv reader, create a dict of data for each request, and keep it in either
     self.testRequests or self.trainingRequests depending on which it is.
@@ -239,12 +250,12 @@ if __name__=='__main__':
 
         # how many teams per generation
         numTeams = DEFAULT_NUM_TEAMS
-        if len(sys.argv) == 3:
+        if len(sys.argv) >= 3:
             numTeams = sys.argv[2]
 
         # how many generations to run for
         numGenerations = 0
-        if len(sys.argv) == 4:
+        if len(sys.argv) >= 4:
             numGenerations = sys.argv[3]
 
         # run the genetic algorithm

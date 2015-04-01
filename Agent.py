@@ -91,11 +91,12 @@ class Agent(object):
             if value >= thresh:
                 totalScore += value * weight
         
-        requestScore = (totalScore / self.maxScore)
-        receivesPizza = requestScore >= self.values.get(threshLabel(C.PIZZA), 1)
+        # TODO: This used to use requestScore instead of totalScore
+        # requestScore = (totalScore / self.maxScore)
+        receivesPizza = totalScore >= self.values.get(threshLabel(C.PIZZA), 1)
         
-        #print 'Total Score: %s, %s, %s, %s' \
-        #    % (totalScore, requestScore, self.values['pizza_thresh'], receivesPizza)
+        #print('Total Score: %s, %s, %s, %s' \
+        #    % (totalScore, requestScore, self.values['pizza_thresh'], receivesPizza))
         
         return receivesPizza
     
@@ -105,12 +106,4 @@ def weightLabel(key):
 
 def threshLabel(key):
     return '%s_%s' % (key, C.THRESH)
-
-
-"""
-returns an instance of an Agent given its ID in the datastore (how this is done is obviously dependent on how our datastore works).  In other words, look up values in the db and return Agent(values).
-"""
-# TODO: might not be necessary
-def initAgent(agentID):
-    pass
 
