@@ -25,16 +25,21 @@ class GeneticAlgorithm(object):
     Set up the genetic algorithm. Set the number of agents, number of generations,
     and agent fields.  Also get all of the pizza requests into memory.
     """
-    def __init__(self, dataFile, numAgents=DEFAULT_NUM_TEAMS, numGenerations=0):
+    def __init__(self, dataFile, testFile, numAgents=DEFAULT_NUM_TEAMS, numGenerations=0):
         self.dataFile = dataFile
+        self.testFile = testFile
         self.numAgents = int(numAgents)
         self.numGenerations = int(numGenerations)
         
         fh = open(self.dataFile, 'r')
-        reader = csv.reader(fh)
-        header = reader.__next__()
-        self.cacheRequests(reader, header)
+        fh2 = open(self.testFile, 'r')
+        trainreader = csv.reader(fh)
+        testreader = csv.reader(fh2)
+        header = trainreader.__next__()
+        testreader.__next__()
+        self.cacheRequests(trainreader, testreader, header)
         fh.close()
+        fh2.close()
         
         for field in C.AGENT_HEADER_IGNORE:
             header.remove(field)
@@ -62,38 +67,34 @@ class GeneticAlgorithm(object):
     runs the genetic algorithm for self.numGenerations generations, running indefinitely if it is 0
     """
     def main(self):
-        # create initial generation
-        generation = self.createGeneration()
-        
+        generation = None
+
         while self.genNumber <= self.numGenerations or self.numGenerations == 0:
+            # create the next generation
+            generation = self.createGeneration(generation)
+        
             # run it
             self.runGeneration(generation)
             
             # save it and its results to file
             self.archiveGeneration(generation)
             
-            # create the next generation
-            generation = self.createGeneration(generation)
-            
-            
         # run against test data
-        self.runGeneration(generation, False)
+        self.runAgainstTest(generation)
         
         # report on results, pickAgent, etc...  
         self.archiveGeneration(generation)
-        pprint(generation)
+        #pprint(generation)
 
     """
     Loops through each agent in the generation and runs Agent.scoreRequest(request) on each request.
     Calculates the accuracy/score of each agent and sets agent.score to it.
     """
-    def runGeneration(self, generation, training=True):
+    def runGeneration(self, generation):
         results = {}
     
         # pick which requests to run against
         requests = self.trainingRequests
-        if not training:
-            requests = self.testRequests
         
         for request in requests:
             for agent in generation:
@@ -108,6 +109,18 @@ class GeneticAlgorithm(object):
         for agent in generation:
             scores = results[agent.id]
             agent.score = len([s for s in scores if s]) / float(len(scores))
+            
+    def runAgainstTest(self, generation):
+        # TODO: pick best agent instead
+        agent = generation[3]
+        
+        fh = open('results.csv', 'w', newline='')
+        writer = csv.writer(fh)
+        writer.writerow(['request_id', 'requester_received_pizza'])
+    
+        for request in self.testRequests:
+            prediction = agent.scoreRequest(request)
+            writer.writerow([request['id'], int(prediction)])
         
     """
     Create a new generation of self.numAgents agents.  A generation can either be an instance
@@ -229,17 +242,22 @@ class GeneticAlgorithm(object):
     Loop through the csv reader, create a dict of data for each request, and keep it in either
     self.testRequests or self.trainingRequests depending on which it is.
     """
-    def cacheRequests(self, reader, header):
-        for line in reader:
-            data = dict(zip(header, line))
-            data['received_pizza'] = json.loads(data['received_pizza'])
-            if data.get('request_type') == 'test':
-                self.testRequests.append(data)
-            else:
-                self.trainingRequests.append(data)
+    def cacheRequests(self, trainreader, testreader, header):
+        def readCSV(reader, test):
+            for line in reader:
+                data = dict(zip(header, line))
+                data['received_pizza'] = json.loads(data['received_pizza'])
+                if test:
+                    self.testRequests.append(data)
+                else:
+                    self.trainingRequests.append(data)
+					
+        readCSV(trainreader, False)
+        readCSV(testreader, True)
+		
 
 def usage():
-    print('Usage:\nGeneticAlgorithm.py dataFile.csv [numTeamsPerRound] [numGenerations]')
+    print('Usage:\nGeneticAlgorithm.py trainFile.csv testFile.csv [numTeamsPerRound] [numGenerations]')
 
 if __name__=='__main__':
     if len(sys.argv) < 3:
@@ -247,17 +265,18 @@ if __name__=='__main__':
     else:
         # score data file, currently assumed to be a csv file
         dataFile = sys.argv[1]
-
+        testFile = sys.argv[2]
+		
         # how many teams per generation
         numTeams = DEFAULT_NUM_TEAMS
-        if len(sys.argv) >= 3:
-            numTeams = sys.argv[2]
+        if len(sys.argv) >= 4:
+            numTeams = sys.argv[3]
 
         # how many generations to run for
         numGenerations = 0
-        if len(sys.argv) >= 4:
-            numGenerations = sys.argv[3]
+        if len(sys.argv) >= 5:
+            numGenerations = sys.argv[4]
 
         # run the genetic algorithm
-        ga = GeneticAlgorithm(dataFile, numTeams, numGenerations)
+        ga = GeneticAlgorithm(dataFile, testFile, numTeams, numGenerations)
         ga.main()
