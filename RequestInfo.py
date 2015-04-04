@@ -23,7 +23,7 @@ class RequestInfo():
 
     def print_request(self):
         text = self.info['request_text']
-        status = self.info['requester_received_pizza']
+        status = self.info.get('requester_received_pizza', '')
         print(text + ' ' + str(status))
 
 
@@ -31,7 +31,7 @@ class RequestInfo():
         #After testing, 400 seemed to be a good value for max length. While there are a few posts with much higher
         #word counts, they appear to be outliers
         max_length = 400
-        text = self.info['request_text']
+        text = self.info.get('request_text', self.info.get('request_text_edit_aware', ''))
         text_words = text.lower().split()
 
         #Count words in title to add to total text
@@ -46,7 +46,7 @@ class RequestInfo():
 
 
     def score_narrative(self):
-        text = self.info['request_text']
+        text = self.info.get('request_text', self.info.get('request_text_edit_aware', ''))
         words = text.lower().split()
 
         student = 0
