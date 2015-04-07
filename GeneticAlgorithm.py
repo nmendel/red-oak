@@ -25,11 +25,12 @@ class GeneticAlgorithm(object):
     Set up the genetic algorithm. Set the number of agents, number of generations,
     and agent fields.  Also get all of the pizza requests into memory.
     """
-    def __init__(self, dataFile, testFile, numAgents=DEFAULT_NUM_TEAMS, numGenerations=0):
+    def __init__(self, dataFile, testFile, numAgents=DEFAULT_NUM_TEAMS, numGenerations=0, kaggle=False):
         self.dataFile = dataFile
         self.testFile = testFile
         self.numAgents = int(numAgents)
         self.numGenerations = int(numGenerations)
+        self.kaggle = kaggle
         
         fh = open(self.dataFile, 'r')
         fh2 = open(self.testFile, 'r')
@@ -111,16 +112,47 @@ class GeneticAlgorithm(object):
             agent.score = len([s for s in scores if s]) / float(len(scores))
             
     def runAgainstTest(self, generation):
-        # TODO: pick best agent instead
-        agent = generation[3]
-        
+        # pick best agent
+        bestAgent = None
+        bestScore = 0.0
+        for agent in generation:
+            if agent.score > bestScore:
+                bestAgent = agent
+            
         fh = open('results.csv', 'w', newline='')
         writer = csv.writer(fh)
         writer.writerow(['request_id', 'requester_received_pizza'])
     
+        total = 0
+        numCorrect = 0
+        falsePositive = 0
+        falseNegative = 0
         for request in self.testRequests:
-            prediction = agent.scoreRequest(request)
-            writer.writerow([request['id'], int(prediction)])
+            prediction = bestAgent.scoreRequest(request)
+            
+            #print(prediction)
+            if self.kaggle:
+                writer.writerow([request['id'], int(prediction)])
+            else:
+                total += 1
+                correct = prediction == request.get('received_pizza')
+                
+                if correct:
+                    numCorrect += 1
+                else:
+                    # write out only requests that were guessed incorrectly
+                    writer.writerow([request['id'], prediction])
+                    if prediction:
+                        falsePositive += 1
+                    else:
+                        falseNegative += 1
+        
+        print(bestAgent)
+        if not self.kaggle:
+            print("Success rate: %s, %s out of %s"
+                % (numCorrect/float(total), numCorrect, total))
+            print("False positives: %s, false negatives: %s"
+                % (falsePositive, falseNegative))
         
     """
     Create a new generation of self.numAgents agents.  A generation can either be an instance
@@ -276,7 +308,12 @@ if __name__=='__main__':
         numGenerations = 0
         if len(sys.argv) >= 5:
             numGenerations = sys.argv[4]
-
+            
+        # run against Kaggle?
+        kaggle = False
+        if len(sys.argv) >= 6:
+            kaggle = True
+            
         # run the genetic algorithm
-        ga = GeneticAlgorithm(dataFile, testFile, numTeams, numGenerations)
+        ga = GeneticAlgorithm(dataFile, testFile, numTeams, numGenerations, kaggle)
         ga.main()
