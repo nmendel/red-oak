@@ -43,6 +43,7 @@ class GeneticAlgorithm(object):
         fh2.close()
         
         for field in C.AGENT_HEADER_IGNORE:
+            print('field is ', field)
             header.remove(field)
             
         self.agentHeader = header
