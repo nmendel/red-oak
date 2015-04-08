@@ -112,5 +112,67 @@ class RequestInfo():
     	else:
           return 1
   
+    def score_requester_account_age_in_days_at_retrieval(self):
+      #most data I saw was in the hundreds place, only a few that were over 1000
+    	days= self.info['requester_account_age_in_days_at_retrieval']
+    	if(days < 1000):
+          return round(days/float(1000), 2)
+    	else:
+          return 1
+            
+    def requester_upvotes_minus_downvotes_at_request(self):
+      #most data I saw was in the hundreds place, but a handful were in the thousands, picked 4000 as the upper limit but this can be changed
+    	votes= self.info['requester_upvotes_minus_downvotes_at_request']
+    	if(votes< 4000):
+          return round(days/float(4000), 2)
+    	else:
+          return 1
           
-              
+    def requester_upvotes_minus_downvotes_at_retrieval(self):
+      #most data I saw was in the hundreds place, but a handful were in the thousands, picked 4000 as the upper limit but this can be changed
+    	votes= self.info['requester_upvotes_minus_downvotes_at_retrieval']
+    	if(votes< 4000):
+          return round(days/float(4000), 2)
+    	else:
+          return 1
+          
+    def post_was_edited(self):
+      #boolean value so returns either 0 or 1
+    	edited= self.info['post_was_edited']
+    	if(edited==1):
+          return 1
+    	else:
+          return 0
+
+    def requester_number_of_comments_at_request(self):
+      #most data I saw was below 100 but a handful were in the hundreds, picked 500 as the upper limit but this can be changed
+    	comments= self.info['requester_number_of_comments_at_request']
+    	if(comments<500):
+          return round(days/float(500), 2)
+    	else:
+          return 1
+          
+    def requester_number_of_comments_at_retrieval(self):
+      #most data I saw was in the hundreds picked 1000 as the upper limit but this can be changed
+    	comments= self.info['requester_number_of_comments_at_retrieval']
+    	if(comments<1000):
+          return round(days/float(1000), 2)
+    	else:
+          return 1  
+          
+    def requester_number_of_posts_at_request(self):
+      #most data I saw was below 100 with a few going over 100, picked 100 as upper limit but this can be changed
+    	posts= self.info['requester_number_of_posts_at_request']
+    	if(posts<100):
+          return round(days/float(100), 2)
+    	else:
+          return 1 
+          
+    def requester_number_of_posts_at_retrieval(self):
+      #most data I saw was below 100 with some going over 100, picked 200 as upper limit but this can be changed
+    	posts= self.info['requester_number_of_posts_at_retrieval']
+    	if(posts<200):
+          return round(days/float(200), 2)
+    	else:
+          return 1  
+             
