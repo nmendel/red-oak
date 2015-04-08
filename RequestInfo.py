@@ -120,7 +120,7 @@ class RequestInfo():
     	else:
           return 1
             
-    def requester_upvotes_minus_downvotes_at_request(self):
+    def score_requester_upvotes_minus_downvotes_at_request(self):
       #most data I saw was in the hundreds place, but a handful were in the thousands, picked 4000 as the upper limit but this can be changed
     	votes= self.info['requester_upvotes_minus_downvotes_at_request']
     	if(votes< 4000):
@@ -128,7 +128,7 @@ class RequestInfo():
     	else:
           return 1
           
-    def requester_upvotes_minus_downvotes_at_retrieval(self):
+    def score_requester_upvotes_minus_downvotes_at_retrieval(self):
       #most data I saw was in the hundreds place, but a handful were in the thousands, picked 4000 as the upper limit but this can be changed
     	votes= self.info['requester_upvotes_minus_downvotes_at_retrieval']
     	if(votes< 4000):
@@ -136,7 +136,23 @@ class RequestInfo():
     	else:
           return 1
           
-    def post_was_edited(self):
+    def score_requester_upvotes_plus_downvotes_at_request(self):
+      #most data I saw was in the hundreds place, but some were in the thousands, picked 10000 as the upper limit but this can be changed
+    	votes= self.info['requester_upvotes_plus_downvotes_at_request']
+    	if(votes< 10000):
+          return round(days/float(10000), 2)
+    	else:
+          return 1
+          
+    def score_requester_upvotes_plus_downvotes_at_retrieval(self):
+      #most data I saw was in the hundreds place, but some were in the thousands, picked 10000 as the upper limit but this can be changed
+    	votes= self.info['requester_upvotes_plus_downvotes_at_retrieval']
+    	if(votes< 10000):
+          return round(days/float(10000), 2)
+    	else:
+          return 1          
+          
+    def score_post_was_edited(self):
       #boolean value so returns either 0 or 1
     	edited= self.info['post_was_edited']
     	if(edited==1):
@@ -144,7 +160,7 @@ class RequestInfo():
     	else:
           return 0
 
-    def requester_number_of_comments_at_request(self):
+    def score_requester_number_of_comments_at_request(self):
       #most data I saw was below 100 but a handful were in the hundreds, picked 500 as the upper limit but this can be changed
     	comments= self.info['requester_number_of_comments_at_request']
     	if(comments<500):
@@ -152,7 +168,7 @@ class RequestInfo():
     	else:
           return 1
           
-    def requester_number_of_comments_at_retrieval(self):
+    def score_requester_number_of_comments_at_retrieval(self):
       #most data I saw was in the hundreds picked 1000 as the upper limit but this can be changed
     	comments= self.info['requester_number_of_comments_at_retrieval']
     	if(comments<1000):
@@ -160,7 +176,7 @@ class RequestInfo():
     	else:
           return 1  
           
-    def requester_number_of_posts_at_request(self):
+    def score_requester_number_of_posts_at_request(self):
       #most data I saw was below 100 with a few going over 100, picked 100 as upper limit but this can be changed
     	posts= self.info['requester_number_of_posts_at_request']
     	if(posts<100):
@@ -168,7 +184,7 @@ class RequestInfo():
     	else:
           return 1 
           
-    def requester_number_of_posts_at_retrieval(self):
+    def score_requester_number_of_posts_at_retrieval(self):
       #most data I saw was below 100 with some going over 100, picked 200 as upper limit but this can be changed
     	posts= self.info['requester_number_of_posts_at_retrieval']
     	if(posts<200):
