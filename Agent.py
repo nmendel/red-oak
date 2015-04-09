@@ -41,7 +41,7 @@ class Agent(object):
     Return all of the agent's information in a list.  Used to write out agents to csv files.
     """
     def getAllInfo(self):
-        vals = [self.id, self.generation, self.score]
+        vals = [self.id, self.generation, self.score, self.values[threshLabel(C.PIZZA)]]
         for field in self.fields:
             vals.append(self.values[weightLabel(field)])
             vals.append(self.values[threshLabel(field)])
@@ -57,7 +57,7 @@ class Agent(object):
             values['%s_%s' % (field, C.WEIGHT)] = round(random(), 2)
             values['%s_%s' % (field, C.THRESH)] = round(random(), 2)
             
-        values['%s_%s' % (C.PIZZA, C.THRESH)] = round(uniform(0, C.MAX_PIZZA_THRESH), 2)
+        values[threshLabel(C.PIZZA)] = round(uniform(0, C.MAX_PIZZA_THRESH), 2)
         
         return values
 	
@@ -89,11 +89,11 @@ class Agent(object):
             weight = self.values.get(weightLabel(key), 0)
             
             if value >= thresh:
-                totalScore += value * weight
+                totalScore += weight # value * weight
         
         # TODO: This used to use requestScore instead of totalScore
         # requestScore = (totalScore / self.maxScore)
-        receivesPizza = totalScore >= self.values.get(threshLabel(C.PIZZA), 1)
+        receivesPizza = totalScore >= self.values[threshLabel(C.PIZZA)]
         
         #print('Total Score: %s, %s, %s, %s' \
         #    % (totalScore, requestScore, self.values['pizza_thresh'], receivesPizza))

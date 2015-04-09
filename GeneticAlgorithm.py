@@ -60,7 +60,12 @@ class GeneticAlgorithm(object):
         self.log = csv.writer(self.log_fh)
         
         # write out the header row
-        self.log.writerow(['ID', 'Gen', 'Score'] + self.agentHeader)
+        logHeader = ['ID', 'Gen', 'Score', 'thresh_pizza']
+        for field in self.agentHeader:
+            logHeader.append(threshLabel(field))
+            logHeader.append(weightLabel(field))
+            
+        self.log.writerow(logHeader)
         
         print("Running genetic algorithm with %s agents for %s generations using data file %s" \
                 % (self.numAgents, self.numGenerations, self.dataFile))
@@ -247,6 +252,14 @@ class GeneticAlgorithm(object):
             else:
                 newValues[weightLabel(key)] = agent2.values.get(weightLabel(key))
                 newValues[threshLabel(key)] = agent2.values.get(threshLabel(key))
+                
+        # overall pizza thresh only has a threshold
+        key = C.PIZZA
+        x = randint(0, 1)
+        if x == 0:
+            newValues[threshLabel(key)] = agent1.values.get(threshLabel(key))
+        else:
+            newValues[threshLabel(key)] = agent2.values.get(threshLabel(key))
                 
         return Agent(self.agentID, self.genNumber, self.agentHeader, newValues)
         
