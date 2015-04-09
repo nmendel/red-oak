@@ -203,3 +203,18 @@ class RequestInfo():
         flair = self.info['requester_user_flair']
         return not (flair == 'null' or flair == None or flair == '')
         
+    def score_requester_number_of_comments_in_raop_at_request(self):
+        #usually very low 0 or 1, small amount have above this
+        comments = self.info['requester_number_of_comments_in_raop_at_request']
+        if(comments<10):
+          return round(days/float(10), 2)
+        else:
+          return 1
+
+    def score_requester_number_of_comments_in_raop_at_retrieval(self):
+        #usually a little more than request, small amount continue to comment on raop
+        comments = self.info['requester_number_of_comments_in_raop_at_retrieval']
+        if(comments<30):
+          return round(days/float(30), 2)
+        else:
+          return 1
