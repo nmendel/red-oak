@@ -97,6 +97,7 @@ class GeneticAlgorithm(object):
     Loops through each agent in the generation and runs Agent.scoreRequest(request) on each request.
     Calculates the accuracy/score of each agent and sets agent.score to it.
     """
+    # TODO: change to use all 5 folds
     def runGeneration(self, generation):
         results = {}
     
@@ -131,6 +132,7 @@ class GeneticAlgorithm(object):
     
         total = 0
         numCorrect = 0
+        totalFalse = 0
         falsePositive = 0
         falseNegative = 0
         for request in self.testRequests:
@@ -141,6 +143,9 @@ class GeneticAlgorithm(object):
                 writer.writerow([request['id'], int(prediction)])
             else:
                 total += 1
+                if not prediction:
+                    totalFalse += 1
+                
                 correct = prediction == request.get('received_pizza')
                 
                 if correct:
@@ -159,6 +164,9 @@ class GeneticAlgorithm(object):
                 % (numCorrect/float(total), numCorrect, total))
             print("False positives: %s, false negatives: %s"
                 % (falsePositive, falseNegative))
+            print("Number predicted to be false: %s out of %s"
+                % (totalFalse, total))
+                
         
     """
     Create a new generation of self.numAgents agents.  A generation can either be an instance
@@ -268,11 +276,14 @@ class GeneticAlgorithm(object):
     Loop through all of the weights and thresholds of the Agent and mutate them if a randomly generated number is less than the mutation constant (a constant for the GeneticAlgorithm that we can tweak between, but not during, runs)
     """
     def mutate(self, agent):
-        for value in agent.values:
+        for key in agent.values:
             x = randint(0, 100)
             if x < C.MUTATION_CONSTANT:
-                agent.values[value] = round(random(), 2)
-
+                # pizza thresh has a configurable max instead of 1
+                if key == threshLabel(C.PIZZA):
+                    agent.values[key] = round(uniform(0, C.MAX_PIZZA_THRESH), 2)
+                else:
+                    agent.values[key] = round(random(), 2)
         
     """
     Save the generation to disk in the csv log file
