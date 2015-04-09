@@ -190,5 +190,16 @@ class RequestInfo():
     	if(posts<200):
           return round(days/float(200), 2)
     	else:
-          return 1  
-             
+          return 1
+          
+    def score_requester_number_of_subreddits_at_request(self):
+        # A small percentage have a whole bunch, but most have only a handful.
+        # 50 seems like a reasonable max
+        num = self.info['requester_number_of_subreddits_at_request']
+        return min(round(num / float(50), 2), 1.0)
+        
+    def score_requester_user_flair(self):
+        # This is an icon or something, so its either something or nothing
+        flair = self.info['requester_user_flair']
+        return not (flair == 'null' or flair == None or flair == '')
+        
