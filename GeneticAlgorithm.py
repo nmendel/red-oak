@@ -76,6 +76,9 @@ class GeneticAlgorithm(object):
     def main(self):
         generation = None
 
+        bestAgentOfAllGens = None
+        bestAgentScore = 0
+
         while self.genNumber <= self.numGenerations or self.numGenerations == 0:
             # create the next generation
             generation = self.createGeneration(generation)
@@ -85,9 +88,16 @@ class GeneticAlgorithm(object):
             
             # save it and its results to file
             self.archiveGeneration(generation)
+
+            # Replace best agent if this generation had a better agent
+
+            for agent in generation:
+                if agent.score > bestAgentScore:
+                    bestAgentOfAllGens = agent
+                    bestAgentScore = agent.score
             
         # run against test data
-        self.runAgainstTest(generation)
+        self.runAgainstTest(generation, bestAgentOfAllGens)
         
         # report on results, pickAgent, etc...  
         self.archiveGeneration(generation)
@@ -118,13 +128,19 @@ class GeneticAlgorithm(object):
             scores = results[agent.id]
             agent.score = len([s for s in scores if s]) / float(len(scores))
             
-    def runAgainstTest(self, generation):
+    def runAgainstTest(self, generation, bestAgentTotalRun):
         # pick best agent
         bestAgent = None
         bestScore = 0.0
         for agent in generation:
             if agent.score > bestScore:
                 bestAgent = agent
+
+        #Compare best from last generation to best of the entire run
+        if bestAgent.score < bestAgentTotalRun.score:
+            bestAgent = bestAgentTotalRun
+            print('The best agent was not from the last generation, it was from generation %s with id %s'
+                % (bestAgent.generation, bestAgent.id))
             
         fh = open('results.csv', 'w', newline='')
         writer = csv.writer(fh)
@@ -158,7 +174,7 @@ class GeneticAlgorithm(object):
                     else:
                         falseNegative += 1
         
-        print(bestAgent)
+        print('Best agent: %s', bestAgent)
         if not self.kaggle:
             print("Success rate: %s, %s out of %s"
                 % (numCorrect/float(total), numCorrect, total))
