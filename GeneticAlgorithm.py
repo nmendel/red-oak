@@ -174,7 +174,7 @@ class GeneticAlgorithm(object):
                     else:
                         falseNegative += 1
         
-        print('Best agent: %s', bestAgent)
+        print('Best agent: %s' % bestAgent)
         if not self.kaggle:
             print("Success rate: %s, %s out of %s"
                 % (numCorrect/float(total), numCorrect, total))
