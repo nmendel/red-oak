@@ -23,7 +23,21 @@ def write_csv(dataset, path):
     swriter = csv.writer(csvfile)
     swriter.writerow(['id', 'received_pizza', 'text_student', 'text_money',
                       'text_job', 'text_family', 'text_desire', 'meta_num_words',
-                      'meta_account_age', 'meta_length_of_time_on_raop'])
+                      'meta_account_age', 'meta_length_of_time_on_raop', 'requester_account_age_in_days_at_retrieval'
+                      'requester_upvotes_minus_downvotes_at_request',
+                      'requester_upvotes_minus_downvotes_at_retrieval',
+                      'requester_upvotes_plus_downvotes_at_request',
+                      'requester_upvotes_plus_downvotes_at_retrieval',
+                      'post_was_edited',
+                      'requester_number_of_comments_at_request',
+                      'requester_number_of_comments_at_retrieval',
+                      'requester_number_of_posts_at_request',
+                      'requester_number_of_posts_at_retrieval',
+                      'requester_number_of_subreddits_at_request',
+                      'requester_user_flair',
+                      'requester_number_of_comments_in_raop_at_request',
+                      'requester_number_of_comments_in_raop_at_retrieval'
+                      ])
     for datnum in dataset:
         reqI = RequestInfo(datnum)
         req = reqI.score_narrative()
@@ -35,6 +49,20 @@ def write_csv(dataset, path):
                           reqI.score_request_length(),
                           reqI.score_requester_account_age_in_days_at_request(),
                           reqI.score_requester_days_since_first_post_on_raop_at_request(),
+                          reqI.score_requester_account_age_in_days_at_retrieval(),
+                          reqI.score_requester_upvotes_minus_downvotes_at_request(),
+                          reqI.score_requester_upvotes_minus_downvotes_at_retrieval(),
+                          reqI.score_requester_upvotes_plus_downvotes_at_request(),
+                          reqI.score_requester_upvotes_plus_downvotes_at_retrieval(),
+                          reqI.score_post_was_edited,
+                          reqI.score_requester_number_of_comments_at_request(),
+                          reqI.score_requester_number_of_comments_at_retrieval(),
+                          reqI.score_requester_number_of_posts_at_request(),
+                          reqI.score_requester_number_of_posts_at_retrieval(),
+                          reqI.score_requester_number_of_subreddits_at_request(),
+                          reqI.score_requester_user_flair(),
+                          reqI.score_requester_number_of_comments_in_raop_at_request(),
+                          reqI.score_requester_number_of_comments_in_raop_at_retrieval()
                           ])
 
 
