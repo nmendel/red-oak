@@ -22,8 +22,11 @@ def write_csv(dataset, path):
     csvfile = open(path, 'w', newline='') # scored_pizza_request_dataset
     swriter = csv.writer(csvfile)
     swriter.writerow(['id', 'received_pizza', 'text_student', 'text_money',
-                      'text_job', 'text_family', 'text_desire', 'meta_num_words',
-                      'meta_account_age', 'meta_length_of_time_on_raop', 'requester_account_age_in_days_at_retrieval'
+                      'text_job', 'text_family', 'text_desire',
+                      'meta_num_words',
+                      'meta_account_age',
+                      'meta_length_of_time_on_raop',
+                      'requester_account_age_in_days_at_retrieval',
                       'requester_upvotes_minus_downvotes_at_request',
                       'requester_upvotes_minus_downvotes_at_retrieval',
                       'requester_upvotes_plus_downvotes_at_request',
@@ -54,7 +57,7 @@ def write_csv(dataset, path):
                           reqI.score_requester_upvotes_minus_downvotes_at_retrieval(),
                           reqI.score_requester_upvotes_plus_downvotes_at_request(),
                           reqI.score_requester_upvotes_plus_downvotes_at_retrieval(),
-                          reqI.score_post_was_edited,
+                          reqI.score_post_was_edited(),
                           reqI.score_requester_number_of_comments_at_request(),
                           reqI.score_requester_number_of_comments_at_retrieval(),
                           reqI.score_requester_number_of_posts_at_request(),
@@ -71,7 +74,7 @@ if __name__ == '__main__':
     # dataset = read_dataset(path)
     # #print_text(dataset)
     # write_csv(dataset)
-    for root, dirs, files in os.walk("pizza_request_dataset"):
+    for root, dirs, files in os.walk("."):
         for file in files:
             if file.endswith(".json"):
                 path = (os.path.join(root, file))

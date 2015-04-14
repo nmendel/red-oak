@@ -234,7 +234,12 @@ class RequestInfo():
             flair = self.info['requester_user_flair']
         except:
             flair = 'null'
-        return not (flair == 'null' or flair == None or flair == '')
+        hasFlair = not (flair == 'null' or flair == None or flair == '')
+
+        if hasFlair:
+            return 1.0
+        else:
+            return 0.0
         
     def score_requester_number_of_comments_in_raop_at_request(self):
         #usually very low 0 or 1, small amount have above this
