@@ -114,98 +114,134 @@ class RequestInfo():
   
     def score_requester_account_age_in_days_at_retrieval(self):
       #most data I saw was in the hundreds place, only a few that were over 1000
-    	days= self.info['requester_account_age_in_days_at_retrieval']
-    	if(days < 1000):
-          return round(days/float(1000), 2)
-    	else:
-          return 1
+        try:
+    	    days= self.info['requester_account_age_in_days_at_retrieval']
+        except:
+            days = 0
+        if(days < 1000):
+            return round(days/float(1000), 2)
+        else:
+            return 1
             
     def score_requester_upvotes_minus_downvotes_at_request(self):
       #most data I saw was in the hundreds place, but a handful were in the thousands, picked 4000 as the upper limit but this can be changed
-    	votes= self.info['requester_upvotes_minus_downvotes_at_request']
-    	if(votes< 4000):
-          return round(votes/float(4000), 2)
-    	else:
-          return 1
+        try:
+    	    votes= self.info['requester_upvotes_minus_downvotes_at_request']
+        except:
+            votes = 0
+        if(votes< 4000):
+            return round(votes/float(4000), 2)
+        else:
+            return 1
           
     def score_requester_upvotes_minus_downvotes_at_retrieval(self):
       #most data I saw was in the hundreds place, but a handful were in the thousands, picked 4000 as the upper limit but this can be changed
-    	votes= self.info['requester_upvotes_minus_downvotes_at_retrieval']
-    	if(votes< 4000):
-          return round(votes/float(4000), 2)
-    	else:
-          return 1
+        try:
+    	    votes= self.info['requester_upvotes_minus_downvotes_at_retrieval']
+        except:
+            votes = 0
+        if(votes< 4000):
+            return round(votes/float(4000), 2)
+        else:
+            return 1
           
     def score_requester_upvotes_plus_downvotes_at_request(self):
       #most data I saw was in the hundreds place, but some were in the thousands, picked 10000 as the upper limit but this can be changed
-    	votes= self.info['requester_upvotes_plus_downvotes_at_request']
-    	if(votes< 10000):
-          return round(votes/float(10000), 2)
-    	else:
-          return 1
+        try:
+    	    votes= self.info['requester_upvotes_plus_downvotes_at_request']
+        except:
+            votes= 0
+        if(votes< 10000):
+            return round(votes/float(10000), 2)
+        else:
+            return 1
           
     def score_requester_upvotes_plus_downvotes_at_retrieval(self):
       #most data I saw was in the hundreds place, but some were in the thousands, picked 10000 as the upper limit but this can be changed
-    	votes= self.info['requester_upvotes_plus_downvotes_at_retrieval']
-    	if(votes< 10000):
-          return round(votes/float(10000), 2)
-    	else:
-          return 1          
+        try:
+    	    votes= self.info['requester_upvotes_plus_downvotes_at_retrieval']
+        except:
+            votes = 0
+        if(votes< 10000):
+            return round(votes/float(10000), 2)
+        else:
+            return 1
           
     def score_post_was_edited(self):
       #boolean value so returns either 0 or 1
     	edited= self.info['post_was_edited']
     	if(edited==1):
-          return 1
+            return 1
     	else:
-          return 0
+            return 0
 
     def score_requester_number_of_comments_at_request(self):
       #most data I saw was below 100 but a handful were in the hundreds, picked 500 as the upper limit but this can be changed
-    	comments= self.info['requester_number_of_comments_at_request']
-    	if(comments<500):
-          return round(comments/float(500), 2)
-    	else:
-          return 1
+        try:
+    	    comments= self.info['requester_number_of_comments_at_request']
+        except:
+            comments = 0
+        if(comments<500):
+            return round(comments/float(500), 2)
+        else:
+            return 1
           
     def score_requester_number_of_comments_at_retrieval(self):
       #most data I saw was in the hundreds picked 1000 as the upper limit but this can be changed
-    	comments= self.info['requester_number_of_comments_at_retrieval']
-    	if(comments<1000):
-          return round(comments/float(1000), 2)
-    	else:
-          return 1  
+        try:
+    	    comments= self.info['requester_number_of_comments_at_retrieval']
+        except:
+            comments = 0
+        if(comments<1000):
+            return round(comments/float(1000), 2)
+        else:
+            return 1
           
     def score_requester_number_of_posts_at_request(self):
       #most data I saw was below 100 with a few going over 100, picked 100 as upper limit but this can be changed
-    	posts= self.info['requester_number_of_posts_at_request']
-    	if(posts<100):
-          return round(posts/float(100), 2)
-    	else:
-          return 1 
+        try:
+    	    posts= self.info['requester_number_of_posts_at_request']
+        except:
+            posts = 0
+        if(posts<100):
+            return round(posts/float(100), 2)
+        else:
+            return 1
           
     def score_requester_number_of_posts_at_retrieval(self):
       #most data I saw was below 100 with some going over 100, picked 200 as upper limit but this can be changed
-    	posts= self.info['requester_number_of_posts_at_retrieval']
-    	if(posts<200):
-          return round(posts/float(200), 2)
-    	else:
-          return 1
+        try:
+    	    posts= self.info['requester_number_of_posts_at_retrieval']
+        except:
+            posts = 0
+        if(posts<200):
+            return round(posts/float(200), 2)
+        else:
+            return 1
           
     def score_requester_number_of_subreddits_at_request(self):
         # A small percentage have a whole bunch, but most have only a handful.
         # 50 seems like a reasonable max
-        num = self.info['requester_number_of_subreddits_at_request']
+        try:
+            num = self.info['requester_number_of_subreddits_at_request']
+        except:
+            num = 0
         return min(round(num / float(50), 2), 1.0)
         
     def score_requester_user_flair(self):
         # This is an icon or something, so its either something or nothing
-        flair = self.info['requester_user_flair']
+        try:
+            flair = self.info['requester_user_flair']
+        except:
+            flair = 'null'
         return not (flair == 'null' or flair == None or flair == '')
         
     def score_requester_number_of_comments_in_raop_at_request(self):
         #usually very low 0 or 1, small amount have above this
-        comments = self.info['requester_number_of_comments_in_raop_at_request']
+        try:
+            comments = self.info['requester_number_of_comments_in_raop_at_request']
+        except:
+            comments = 0
         if(comments<10):
           return round(comments/float(10), 2)
         else:
@@ -213,7 +249,10 @@ class RequestInfo():
 
     def score_requester_number_of_comments_in_raop_at_retrieval(self):
         #usually a little more than request, small amount continue to comment on raop
-        comments = self.info['requester_number_of_comments_in_raop_at_retrieval']
+        try:
+            comments = self.info['requester_number_of_comments_in_raop_at_retrieval']
+        except:
+            comments = 0
         if(comments<30):
           return round(comments/float(30), 2)
         else:
