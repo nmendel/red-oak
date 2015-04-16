@@ -20,17 +20,18 @@ class GeneticAlgorithm(object):
     
     trainingRequests = []
     testRequests = []
+    kaggleRequests = []
 
     """
     Set up the genetic algorithm. Set the number of agents, number of generations,
     and agent fields.  Also get all of the pizza requests into memory.
     """
-    def __init__(self, dataFile, testFile, numAgents=DEFAULT_NUM_TEAMS, numGenerations=0, kaggle=False):
+    def __init__(self, dataFile, testFile, numAgents=DEFAULT_NUM_TEAMS, numGenerations=0, kaggleFile=None):
         self.dataFile = dataFile
         self.testFile = testFile
         self.numAgents = int(numAgents)
         self.numGenerations = int(numGenerations)
-        self.kaggle = kaggle
+        self.kaggleFile = kaggleFile
         
         fh = open(self.dataFile, 'r')
         fh2 = open(self.testFile, 'r')
@@ -79,7 +80,8 @@ class GeneticAlgorithm(object):
         bestAgentOfAllGens = None
         bestAgentScore = 0
 
-        while self.genNumber <= self.numGenerations or self.numGenerations == 0:
+        while ((self.genNumber <= self.numGenerations or self.numGenerations == 0)
+                and bestAgentScore < C.SCORE_THRESHOLD):
             # create the next generation
             generation = self.createGeneration(generation)
         
@@ -97,7 +99,11 @@ class GeneticAlgorithm(object):
                     bestAgentScore = agent.score
             
         # run against test data
-        self.runAgainstTest(generation, bestAgentOfAllGens)
+        self.runAgainstTest(generation, bestAgentOfAllGens, self.testRequests)
+        
+        if self.kaggleFile:
+            self.runAgainstTest(generation, bestAgentOfAllGens,
+                                self.kaggleRequests, False)
         
         # report on results, pickAgent, etc...  
         self.archiveGeneration(generation)
@@ -128,7 +134,7 @@ class GeneticAlgorithm(object):
             scores = results[agent.id]
             agent.score = len([s for s in scores if s]) / float(len(scores))
             
-    def runAgainstTest(self, generation, bestAgentTotalRun):
+    def runAgainstTest(self, generation, bestAgentTotalRun, requests, doscore=True):
         # pick best agent
         bestAgent = None
         bestScore = 0.0
@@ -142,7 +148,7 @@ class GeneticAlgorithm(object):
             print('The best agent was not from the last generation, it was from generation %s with id %s'
                 % (bestAgent.generation, bestAgent.id))
             
-        fh = open('results.csv', 'w', newline='')
+        fh = open('kaggle_results.csv', 'w', newline='')
         writer = csv.writer(fh)
         writer.writerow(['request_id', 'requester_received_pizza'])
     
@@ -151,11 +157,11 @@ class GeneticAlgorithm(object):
         totalFalse = 0
         falsePositive = 0
         falseNegative = 0
-        for request in self.testRequests:
+        for request in requests:
             prediction = bestAgent.scoreRequest(request)
             
             #print(prediction)
-            if self.kaggle:
+            if not doscore:
                 writer.writerow([request['id'], int(prediction)])
             else:
                 total += 1
@@ -174,8 +180,8 @@ class GeneticAlgorithm(object):
                     else:
                         falseNegative += 1
         
-        print('Best agent: %s' % bestAgent)
-        if not self.kaggle:
+        if doscore:
+            print('Best agent: %s' % bestAgent)
             print("Success rate: %s, %s out of %s"
                 % (numCorrect/float(total), numCorrect, total))
             print("False positives: %s, false negatives: %s"
@@ -316,19 +322,28 @@ class GeneticAlgorithm(object):
     self.testRequests or self.trainingRequests depending on which it is.
     """
     def cacheRequests(self, trainreader, testreader, header):
-        def readCSV(reader, test):
+        def readCSV(reader, type='train'):
             for line in reader:
                 data = dict(zip(header, line))
                 data['received_pizza'] = json.loads(data['received_pizza'])
-                if test:
+                if type == 'test':
                     self.testRequests.append(data)
-                else:
+                elif type == 'train':
                     self.trainingRequests.append(data)
+                else:
+                    self.kaggleRequests.append(data)
 					
-        readCSV(trainreader, False)
-        readCSV(testreader, True)
-		
-
+        readCSV(trainreader, 'train')
+        readCSV(testreader, 'test')
+        
+        if self.kaggleFile:
+            fh = open(self.kaggleFile, 'r')
+            kagglereader = csv.reader(fh)
+            kagglereader.__next__()
+            readCSV(kagglereader, 'kaggle')
+            fh.close()
+            
+        
 def usage():
     print('Usage:\nGeneticAlgorithm.py trainFile.csv testFile.csv [numTeamsPerRound] [numGenerations]')
 
@@ -351,10 +366,11 @@ if __name__=='__main__':
             numGenerations = sys.argv[4]
             
         # run against Kaggle?
-        kaggle = False
+        kaggleFile = None
         if len(sys.argv) >= 6:
-            kaggle = True
+            kaggleFile = sys.argv[5]
             
         # run the genetic algorithm
-        ga = GeneticAlgorithm(dataFile, testFile, numTeams, numGenerations, kaggle)
+        ga = GeneticAlgorithm(dataFile, testFile, numTeams,
+                              numGenerations, kaggleFile)
         ga.main()

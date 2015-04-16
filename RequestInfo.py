@@ -169,7 +169,8 @@ class RequestInfo():
           
     def score_post_was_edited(self):
       #boolean value so returns either 0 or 1
-    	edited= self.info['post_was_edited']
+      # not present in test.json, so can only be used for training
+    	edited= self.info.get('post_was_edited', 0)
     	if(edited==1):
             return 1
     	else:
