@@ -82,7 +82,7 @@ class RequestInfo():
         total = float(student + money + job + family + desire)
 		
         def getScore(categoryScore):
-            return round(min(categoryScore/10, 1.0), 2)
+            return round(categoryScore/total, 2)
  
         if total > 0:
             nar = {'student': getScore(student), 'money': getScore(money), 'job': getScore(job),

@@ -74,7 +74,7 @@ if __name__ == '__main__':
     # dataset = read_dataset(path)
     # #print_text(dataset)
     # write_csv(dataset)
-    for root, dirs, files in os.walk("./pizza_request_dataset/kfold0"):
+    for root, dirs, files in os.walk("."):
         for file in files:
             if file.endswith(".json"):
                 path = (os.path.join(root, file))
