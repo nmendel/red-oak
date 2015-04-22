@@ -55,7 +55,7 @@ class GeneticAlgorithm(object):
             os.makedirs(logfolder)
         
         # setup csv log to write all agents to
-        logfile = "RAOP-%s.log" % datetime.now().strftime('%Y%m%d%H%M%S')
+        logfile = "RAOP-%s-log.csv" % datetime.now().strftime('%Y%m%d%H%M%S')
         logfile = os.path.join(logfolder, logfile)
         self.log_fh = open(logfile, 'w', newline='')
         self.log = csv.writer(self.log_fh)
