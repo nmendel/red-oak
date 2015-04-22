@@ -19,12 +19,14 @@ def create_kfolds(dataset):
             os.makedirs(dirname)
         for datum in dataset:
             #line to ignore data in kaggle set
-            if '"in_test_set": true,' not in datum:
+            if not datum.get('in_test_set') == True:
                 if count % 5 == 0:
                     testdataset.append(datum)
                 else:
                     traindataset.append(datum)
                 count += 1
+            else:
+                print("Datum is actually in test set, dropping")
         testfilename = r'./kfold%d/test_data_fold%d.json' % (x, x)
         with open(testfilename, 'w') as testfile:
             json.dump(testdataset, testfile, indent=4, separators=(',', ': '))
