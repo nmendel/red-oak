@@ -153,6 +153,7 @@ class GeneticAlgorithm(object):
         for agent in generation:
             if agent.score > bestScore:
                 bestAgent = agent
+                bestScore = agent.score
 
         #Compare best from last generation to best of the entire run
         if bestAgent.score < bestAgentTotalRun.score:
@@ -243,6 +244,7 @@ class GeneticAlgorithm(object):
              
              if agent.score > bestScore:
                 bestAgent = agent
+                bestScore = agent.score
         
         # keep the best agent as-is for the next generation
         agents.append(bestAgent)
@@ -341,6 +343,7 @@ class GeneticAlgorithm(object):
                 elif type == 'train':
                     self.trainingRequests.append(data)
                 else:
+                    #print("Appending following datum to kaggleRequests", data)
                     self.kaggleRequests.append(data)
 					
         readCSV(trainreader, 'train')

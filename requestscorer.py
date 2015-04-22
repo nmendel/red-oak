@@ -26,24 +26,20 @@ def write_csv(dataset, path):
                       'meta_num_words',
                       'meta_account_age',
                       'meta_length_of_time_on_raop',
-                      'requester_account_age_in_days_at_retrieval',
                       'requester_upvotes_minus_downvotes_at_request',
-                      'requester_upvotes_minus_downvotes_at_retrieval',
                       'requester_upvotes_plus_downvotes_at_request',
-                      'requester_upvotes_plus_downvotes_at_retrieval',
                       #'post_was_edited',
                       'requester_number_of_comments_at_request',
-                      'requester_number_of_comments_at_retrieval',
                       'requester_number_of_posts_at_request',
-                      'requester_number_of_posts_at_retrieval',
                       'requester_number_of_subreddits_at_request',
                       'requester_user_flair',
                       'requester_number_of_comments_in_raop_at_request',
-                      'requester_number_of_comments_in_raop_at_retrieval'
                       ])
     for datnum in dataset:
         reqI = RequestInfo(datnum)
         req = reqI.score_narrative()
+
+       # print(reqI.info)
 
         #Write the data to the csv
         swriter.writerow([datnum['request_id'],
@@ -52,20 +48,14 @@ def write_csv(dataset, path):
                           reqI.score_request_length(),
                           reqI.score_requester_account_age_in_days_at_request(),
                           reqI.score_requester_days_since_first_post_on_raop_at_request(),
-                          reqI.score_requester_account_age_in_days_at_retrieval(),
                           reqI.score_requester_upvotes_minus_downvotes_at_request(),
-                          reqI.score_requester_upvotes_minus_downvotes_at_retrieval(),
                           reqI.score_requester_upvotes_plus_downvotes_at_request(),
-                          reqI.score_requester_upvotes_plus_downvotes_at_retrieval(),
                           #reqI.score_post_was_edited(),
                           reqI.score_requester_number_of_comments_at_request(),
-                          reqI.score_requester_number_of_comments_at_retrieval(),
                           reqI.score_requester_number_of_posts_at_request(),
-                          reqI.score_requester_number_of_posts_at_retrieval(),
                           reqI.score_requester_number_of_subreddits_at_request(),
                           reqI.score_requester_user_flair(),
                           reqI.score_requester_number_of_comments_in_raop_at_request(),
-                          reqI.score_requester_number_of_comments_in_raop_at_retrieval()
                           ])
 
 
@@ -74,7 +64,7 @@ if __name__ == '__main__':
     # dataset = read_dataset(path)
     # #print_text(dataset)
     # write_csv(dataset)
-    for root, dirs, files in os.walk("./kaggle/"):
+    for root, dirs, files in os.walk("."):
         for file in files:
             if file.endswith(".json"):
                 path = (os.path.join(root, file))
