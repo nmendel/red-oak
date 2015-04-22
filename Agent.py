@@ -1,4 +1,5 @@
 
+import csv
 from random import random, uniform
 from pprint import pprint
  
@@ -106,4 +107,26 @@ def weightLabel(key):
 
 def threshLabel(key):
     return '%s_%s' % (key, C.THRESH)
+    
+def serializeAgentFromLog(logfile, id):
+    fh = open(logfile, 'r')
+    reader = csv.reader(fh)
+    header = reader.__next__()
+    
+    for agent in reader:
+        if agent[0] == str(id):
+            break
+    
+    gen = agent[1]
+    
+    # remove non-scoring fields from agent and header
+    agent = agent[3:]
+    for field in ['ID', 'Gen', 'Score']:
+        header.remove(field)
+    
+    # convert agent scoring fields from strings to floats
+    agent = [float(v) for v in agent]
+    values = dict(zip(header, agent))
+
+    return Agent(id, gen, header, values)
 

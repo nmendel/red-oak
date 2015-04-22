@@ -16,7 +16,7 @@ DEFAULT_NUM_TEAMS = 30
 
 class GeneticAlgorithm(object):
     genNumber = 0
-    agentID = 999
+    agentID = 1000
     
     trainingRequests = []
     testRequests = []
@@ -44,7 +44,7 @@ class GeneticAlgorithm(object):
         fh2.close()
         
         for field in C.AGENT_HEADER_IGNORE:
-            print('field is ', field)
+            # print('field is ', field)
             header.remove(field)
             
         self.agentHeader = header
@@ -55,7 +55,7 @@ class GeneticAlgorithm(object):
             os.makedirs(logfolder)
         
         # setup csv log to write all agents to
-        logfile = "RAOP-%s.log" % datetime.now().strftime('%Y%m%d%H%M%S')
+        logfile = "RAOP-%s-log.csv" % datetime.now().strftime('%Y%m%d%H%M%S')
         logfile = os.path.join(logfolder, logfile)
         self.log_fh = open(logfile, 'w', newline='')
         self.log = csv.writer(self.log_fh)
@@ -116,6 +116,9 @@ class GeneticAlgorithm(object):
     # TODO: change to use all 5 folds
     def runGeneration(self, generation):
         results = {}
+        # keep track of each individual prediction by each agent 
+        # so we know if they're always guessing false
+        predictions = {}
     
         # pick which requests to run against
         requests = self.trainingRequests
@@ -128,11 +131,20 @@ class GeneticAlgorithm(object):
                 # was it correct?
                 correct = prediction == request.get('received_pizza')
                 results.setdefault(agent.id, []).append(correct)
+                predictions.setdefault(agent.id, []).append(prediction)
                 
         # set agent.score to the percent of requests that each agent got correct
         for agent in generation:
             scores = results[agent.id]
             agent.score = len([s for s in scores if s]) / float(len(scores))
+            
+            # if the agent guessed more than MAX_FALSE_PERCENTAGE did not receive pizza,
+            # penalize their score.  This helps combat a local maximum of guessing false
+            # for every or nearly every request
+            percentFalse = len([p for p in predictions if not p]) / float(len(predictions))
+            if percentFalse >= C.MAX_FALSE_PERCENTAGE:
+                agent.score = max(agent.score - C.TOO_MANY_FALSE_PENALTY, 0.01)
+            
             
     def runAgainstTest(self, generation, bestAgentTotalRun, requests, doscore=True):
         # pick best agent
@@ -147,10 +159,11 @@ class GeneticAlgorithm(object):
             bestAgent = bestAgentTotalRun
             print('The best agent was not from the last generation, it was from generation %s with id %s'
                 % (bestAgent.generation, bestAgent.id))
-            
-        fh = open('kaggle_results.csv', 'w', newline='')
-        writer = csv.writer(fh)
-        writer.writerow(['request_id', 'requester_received_pizza'])
+          
+        if not doscore:
+            fh = open('kaggle_results.csv', 'w', newline='')
+            writer = csv.writer(fh)
+            writer.writerow(['request_id', 'requester_received_pizza'])
     
         total = 0
         numCorrect = 0
@@ -173,8 +186,6 @@ class GeneticAlgorithm(object):
                 if correct:
                     numCorrect += 1
                 else:
-                    # write out only requests that were guessed incorrectly
-                    writer.writerow([request['id'], prediction])
                     if prediction:
                         falsePositive += 1
                     else:
@@ -201,7 +212,6 @@ class GeneticAlgorithm(object):
         
         # increment the generation number
         self.genNumber += 1
-        self.agentID += 1
         
         # If there is no current generation, we've just started, create random agents.
         # Otherwise breed new agents using results from the current generations.
