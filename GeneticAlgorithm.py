@@ -85,18 +85,23 @@ class GeneticAlgorithm(object):
             # create the next generation
             generation = self.createGeneration(generation)
         
-            # run it
+            # run against test every N number of generations
+            if (self.genNumber % C.CHECK_AGAINST_TEST_AFTER_N_GENS) == 0:
+                self.runGeneration(generation, test=True)
+                
+                # Replace best agent if this generation had a better agent
+                # Only take best agents based on their scores against the test dataset
+                for agent in generation:
+                    if agent.score > bestAgentScore:
+                        bestAgentOfAllGens = agent
+                        bestAgentScore = agent.score
+            
+            # run the generation against train even if it was run against test
+            # (agent.score will be overwritten) so we don't use the test data for training
             self.runGeneration(generation)
             
             # save it and its results to file
             self.archiveGeneration(generation)
-
-            # Replace best agent if this generation had a better agent
-
-            for agent in generation:
-                if agent.score > bestAgentScore:
-                    bestAgentOfAllGens = agent
-                    bestAgentScore = agent.score
             
         # run against test data
         self.runAgainstTest(generation, bestAgentOfAllGens, self.testRequests)
@@ -113,8 +118,7 @@ class GeneticAlgorithm(object):
     Loops through each agent in the generation and runs Agent.scoreRequest(request) on each request.
     Calculates the accuracy/score of each agent and sets agent.score to it.
     """
-    # TODO: change to use all 5 folds
-    def runGeneration(self, generation):
+    def runGeneration(self, generation, test=False):
         results = {}
         # keep track of each individual prediction by each agent 
         # so we know if they're always guessing false
@@ -122,6 +126,8 @@ class GeneticAlgorithm(object):
     
         # pick which requests to run against
         requests = self.trainingRequests
+        if test:
+            requests = self.testRequests
         
         for request in requests:
             for agent in generation:
@@ -343,7 +349,6 @@ class GeneticAlgorithm(object):
                 elif type == 'train':
                     self.trainingRequests.append(data)
                 else:
-                    #print("Appending following datum to kaggleRequests", data)
                     self.kaggleRequests.append(data)
 					
         readCSV(trainreader, 'train')
