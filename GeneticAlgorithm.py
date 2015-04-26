@@ -90,7 +90,6 @@ class GeneticAlgorithm(object):
                 self.runGeneration(generation, test=True)
                 
                 # Replace best agent if this generation had a better agent
-                # Only take best agents based on their scores against the test dataset
                 for agent in generation:
                     if agent.score > bestAgentScore:
                         bestAgentOfAllGens = agent
@@ -99,6 +98,12 @@ class GeneticAlgorithm(object):
             # run the generation against train even if it was run against test
             # (agent.score will be overwritten) so we don't use the test data for training
             self.runGeneration(generation)
+            
+            # Replace best agent if this generation had a better agent
+            for agent in generation:
+                if agent.score > bestAgentScore:
+                    bestAgentOfAllGens = agent
+                    bestAgentScore = agent.score
             
             # save it and its results to file
             self.archiveGeneration(generation)
@@ -147,7 +152,8 @@ class GeneticAlgorithm(object):
             # if the agent guessed more than MAX_FALSE_PERCENTAGE did not receive pizza,
             # penalize their score.  This helps combat a local maximum of guessing false
             # for every or nearly every request
-            percentFalse = len([p for p in predictions if not p]) / float(len(predictions))
+            agentPredictions = predictions[agent.id]
+            percentFalse = len([p for p in agentPredictions if not p]) / float(len(agentPredictions))
             if percentFalse >= C.MAX_FALSE_PERCENTAGE:
                 agent.score = max(agent.score - C.TOO_MANY_FALSE_PENALTY, 0.01)
             

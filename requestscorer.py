@@ -32,7 +32,7 @@ def write_csv(dataset, path):
                       'requester_number_of_comments_at_request',
                       'requester_number_of_posts_at_request',
                       'requester_number_of_subreddits_at_request',
-                      'requester_user_flair',
+                      #'requester_user_flair',
                       'requester_number_of_comments_in_raop_at_request',
                       ])
     for datnum in dataset:
@@ -54,7 +54,7 @@ def write_csv(dataset, path):
                           reqI.score_requester_number_of_comments_at_request(),
                           reqI.score_requester_number_of_posts_at_request(),
                           reqI.score_requester_number_of_subreddits_at_request(),
-                          reqI.score_requester_user_flair(),
+                          #reqI.score_requester_user_flair(),
                           reqI.score_requester_number_of_comments_in_raop_at_request(),
                           ])
 
