@@ -76,7 +76,7 @@ class Agent(object):
     """
     Scores a request based on the request's values and the agent's values and returns a boolean on whether the Agent thinks the request will be pizza'd
     """
-    def scoreRequest(self, request):
+    def scoreRequest(self, request, returnPercent=False):
         totalScore = 0.0
         numKeys = 0
                 
@@ -92,7 +92,9 @@ class Agent(object):
             if value >= thresh:
                 totalScore += weight # value * weight
         
-        # TODO: This used to use requestScore instead of totalScore
+        if returnPercent:
+            return min(totalScore, 1.0)
+            
         # requestScore = (totalScore / self.maxScore)
         receivesPizza = totalScore >= self.values[threshLabel(C.PIZZA)]
         
@@ -100,7 +102,7 @@ class Agent(object):
         #    % (totalScore, requestScore, self.values['pizza_thresh'], receivesPizza))
         
         return receivesPizza
-    
+        
     
 def weightLabel(key):
     return '%s_%s' % (key, C.WEIGHT)
@@ -117,12 +119,17 @@ def serializeAgentFromLog(logfile, id):
         if agent[0] == str(id):
             break
     
+    for field in ['ID', 'Gen', 'Score']:
+        header.remove(field)
+    
+    return serializeAgent(header, agent)
+    
+def serializeAgent(header, agent):
+    id = agent[0]
     gen = agent[1]
     
     # remove non-scoring fields from agent and header
     agent = agent[3:]
-    for field in ['ID', 'Gen', 'Score']:
-        header.remove(field)
     
     # convert agent scoring fields from strings to floats
     agent = [float(v) for v in agent]

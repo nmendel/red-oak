@@ -61,7 +61,7 @@ class GeneticAlgorithm(object):
         self.log = csv.writer(self.log_fh)
         
         # write out the header row
-        logHeader = ['ID', 'Gen', 'Score', 'thresh_pizza']
+        logHeader = ['ID', 'Gen', 'Score', 'pizza_thresh']
         for field in self.agentHeader:
             logHeader.append(threshLabel(field))
             logHeader.append(weightLabel(field))
@@ -325,7 +325,7 @@ def runAgainstTest(generation, bestAgentTotalRun, requests, doscore=True):
         print('The best agent was not from the last generation, it was from generation %s with id %s'
             % (bestAgent.generation, bestAgent.id))
 
-def runAgentAgainstTest(bestAgent, requests, doscore)
+def runAgentAgainstTest(bestAgent, requests, doscore):
     if not doscore:
         fh = open('kaggle_results.csv', 'w', newline='')
         writer = csv.writer(fh)
@@ -338,12 +338,13 @@ def runAgentAgainstTest(bestAgent, requests, doscore)
     falseNegative = 0
     for request in requests:
         prediction = bestAgent.scoreRequest(request)
+        total += 1
         
         #print(prediction)
         if not doscore:
-            writer.writerow([request['id'], int(prediction)])
+            predictionPercent = bestAgent.scoreRequest(request, returnPercent=True)
+            writer.writerow([request['id'], predictionPercent])
         else:
-            total += 1
             if not prediction:
                 totalFalse += 1
             
@@ -365,7 +366,10 @@ def runAgentAgainstTest(bestAgent, requests, doscore)
             % (falsePositive, falseNegative))
         print("Number predicted to be false: %s out of %s"
             % (totalFalse, total))
+    else:
+        fh.close()
 
+    return numCorrect/float(total)
         
 def usage():
     print('Usage:\nGeneticAlgorithm.py trainFile.csv testFile.csv [numTeamsPerRound] [numGenerations]')
