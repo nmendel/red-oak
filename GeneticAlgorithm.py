@@ -324,6 +324,8 @@ def runAgainstTest(generation, bestAgentTotalRun, requests, doscore=True):
         bestAgent = bestAgentTotalRun
         print('The best agent was not from the last generation, it was from generation %s with id %s'
             % (bestAgent.generation, bestAgent.id))
+            
+    runAgentAgainstTest(bestAgent, requests, doscore)
 
 def runAgentAgainstTest(bestAgent, requests, doscore):
     if not doscore:
