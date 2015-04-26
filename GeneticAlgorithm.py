@@ -109,11 +109,11 @@ class GeneticAlgorithm(object):
             self.archiveGeneration(generation)
             
         # run against test data
-        self.runAgainstTest(generation, bestAgentOfAllGens, self.testRequests)
+        runAgainstTest(generation, bestAgentOfAllGens, self.testRequests)
         
         if self.kaggleFile:
-            self.runAgainstTest(generation, bestAgentOfAllGens,
-                                self.kaggleRequests, False)
+            runAgainstTest(generation, bestAgentOfAllGens,
+                           self.kaggleRequests, False)
         
         # report on results, pickAgent, etc...  
         self.archiveGeneration(generation)
@@ -156,63 +156,6 @@ class GeneticAlgorithm(object):
             percentFalse = len([p for p in agentPredictions if not p]) / float(len(agentPredictions))
             if percentFalse >= C.MAX_FALSE_PERCENTAGE:
                 agent.score = max(agent.score - C.TOO_MANY_FALSE_PENALTY, 0.01)
-            
-            
-    def runAgainstTest(self, generation, bestAgentTotalRun, requests, doscore=True):
-        # pick best agent
-        bestAgent = None
-        bestScore = 0.0
-        for agent in generation:
-            if agent.score > bestScore:
-                bestAgent = agent
-                bestScore = agent.score
-
-        #Compare best from last generation to best of the entire run
-        if bestAgent.score < bestAgentTotalRun.score:
-            bestAgent = bestAgentTotalRun
-            print('The best agent was not from the last generation, it was from generation %s with id %s'
-                % (bestAgent.generation, bestAgent.id))
-          
-        if not doscore:
-            fh = open('kaggle_results.csv', 'w', newline='')
-            writer = csv.writer(fh)
-            writer.writerow(['request_id', 'requester_received_pizza'])
-    
-        total = 0
-        numCorrect = 0
-        totalFalse = 0
-        falsePositive = 0
-        falseNegative = 0
-        for request in requests:
-            prediction = bestAgent.scoreRequest(request)
-            
-            #print(prediction)
-            if not doscore:
-                writer.writerow([request['id'], int(prediction)])
-            else:
-                total += 1
-                if not prediction:
-                    totalFalse += 1
-                
-                correct = prediction == request.get('received_pizza')
-                
-                if correct:
-                    numCorrect += 1
-                else:
-                    if prediction:
-                        falsePositive += 1
-                    else:
-                        falseNegative += 1
-        
-        if doscore:
-            print('Best agent: %s' % bestAgent)
-            print("Success rate: %s, %s out of %s"
-                % (numCorrect/float(total), numCorrect, total))
-            print("False positives: %s, false negatives: %s"
-                % (falsePositive, falseNegative))
-            print("Number predicted to be false: %s out of %s"
-                % (totalFalse, total))
-                
         
     """
     Create a new generation of self.numAgents agents.  A generation can either be an instance
@@ -366,7 +309,63 @@ class GeneticAlgorithm(object):
             kagglereader.__next__()
             readCSV(kagglereader, 'kaggle')
             fh.close()
+
+def runAgainstTest(generation, bestAgentTotalRun, requests, doscore=True):
+    # pick best agent
+    bestAgent = None
+    bestScore = 0.0
+    for agent in generation:
+        if agent.score > bestScore:
+            bestAgent = agent
+            bestScore = agent.score
+
+    #Compare best from last generation to best of the entire run
+    if bestAgent.score < bestAgentTotalRun.score:
+        bestAgent = bestAgentTotalRun
+        print('The best agent was not from the last generation, it was from generation %s with id %s'
+            % (bestAgent.generation, bestAgent.id))
+
+def runAgentAgainstTest(bestAgent, requests, doscore)
+    if not doscore:
+        fh = open('kaggle_results.csv', 'w', newline='')
+        writer = csv.writer(fh)
+        writer.writerow(['request_id', 'requester_received_pizza'])
+    
+    total = 0
+    numCorrect = 0
+    totalFalse = 0
+    falsePositive = 0
+    falseNegative = 0
+    for request in requests:
+        prediction = bestAgent.scoreRequest(request)
+        
+        #print(prediction)
+        if not doscore:
+            writer.writerow([request['id'], int(prediction)])
+        else:
+            total += 1
+            if not prediction:
+                totalFalse += 1
             
+            correct = prediction == request.get('received_pizza')
+            
+            if correct:
+                numCorrect += 1
+            else:
+                if prediction:
+                    falsePositive += 1
+                else:
+                    falseNegative += 1
+    
+    if doscore:
+        print('Best agent: %s' % bestAgent)
+        print("Success rate: %s, %s out of %s"
+            % (numCorrect/float(total), numCorrect, total))
+        print("False positives: %s, false negatives: %s"
+            % (falsePositive, falseNegative))
+        print("Number predicted to be false: %s out of %s"
+            % (totalFalse, total))
+
         
 def usage():
     print('Usage:\nGeneticAlgorithm.py trainFile.csv testFile.csv [numTeamsPerRound] [numGenerations]')
