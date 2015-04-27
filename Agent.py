@@ -92,14 +92,17 @@ class Agent(object):
             if value >= thresh:
                 totalScore += weight # value * weight
         
+        SCORE_MULTIPLIER = 4
+        finalScore = SCORE_MULTIPLIER * (totalScore / float(numKeys))
+        
         if returnPercent:
-            return min(totalScore, 1.0)
+            return min(finalScore, 1.0)
             
         # requestScore = (totalScore / self.maxScore)
-        receivesPizza = totalScore >= self.values[threshLabel(C.PIZZA)]
+        receivesPizza = finalScore >= (SCORE_MULTIPLIER * self.values[threshLabel(C.PIZZA)])
         
-        #print('Total Score: %s, %s, %s, %s' \
-        #    % (totalScore, requestScore, self.values['pizza_thresh'], receivesPizza))
+        #print('Final Score: %s, %s, %s, %s' \
+        #    % (finalScore, requestScore, self.values['pizza_thresh'], receivesPizza))
         
         return receivesPizza
         
