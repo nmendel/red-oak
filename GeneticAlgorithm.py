@@ -77,11 +77,11 @@ class GeneticAlgorithm(object):
     def main(self):
         generation = None
 
-        bestAgentOfAllGens = None
-        bestAgentScore = 0
+        bestAgentOfAllGens = Agent(0, 0, {}, {})
 
+        #Run the algorithm fo X generations and train some agents!
         while ((self.genNumber <= self.numGenerations or self.numGenerations == 0)
-                and bestAgentScore < C.SCORE_THRESHOLD):
+                and bestAgentOfAllGens.score < C.SCORE_THRESHOLD):
             # create the next generation
             generation = self.createGeneration(generation)
         
@@ -91,9 +91,8 @@ class GeneticAlgorithm(object):
                 
                 # Replace best agent if this generation had a better agent
                 for agent in generation:
-                    if agent.score > bestAgentScore:
+                    if agent.score > bestAgentOfAllGens.score:
                         bestAgentOfAllGens = agent
-                        bestAgentScore = agent.score
             
             # run the generation against train even if it was run against test
             # (agent.score will be overwritten) so we don't use the test data for training
@@ -101,12 +100,14 @@ class GeneticAlgorithm(object):
             
             # Replace best agent if this generation had a better agent
             for agent in generation:
-                if agent.score > bestAgentScore:
+                if agent.score > bestAgentOfAllGens.score:
                     bestAgentOfAllGens = agent
-                    bestAgentScore = agent.score
             
             # save it and its results to file
             self.archiveGeneration(generation)
+
+            print('Finished run of generation %s the best agent so far is %s'
+            % (self.genNumber, bestAgentOfAllGens))
             
         # run against test data
         runAgainstTest(generation, bestAgentOfAllGens, self.testRequests)
