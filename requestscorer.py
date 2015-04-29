@@ -74,35 +74,35 @@ if __name__ == '__main__':
                 write_csv(dataset, csvPath)
                 
     # Python for creating kaggle_test.csv, run this from the red-oak folder
-    fh1 = open('kaggle/kaggle_test.csv', 'r')
-    fh2 = open('pizza_request_dataset/pizza_request_dataset.csv', 'r')
-    r1 = csv.reader(fh1)
-    r2 = csv.reader(fh2)
-    kaggle = {}
-    for line in r1:
-        kaggle[line[0]] = line
-
-    lines = []
-    ids = []
-    for line in r2:
-        if line[0] in kaggle:
-            lines.append(line)
-            ids.append(line[0])
-
-    if len(lines) < len(kaggle):
-        for id in kaggle:
-            if not id in ids:
-                print("missing id: %s" % id)
-                lines.append(kaggle[id])
-                
-    fh1.close()
-    fh2.close()
-
-    outfile = open('kaggle/kaggle_test.csv', 'w', newline='')
-    w = csv.writer(outfile)
-    for i, line in enumerate(lines):
-        if i > 0:
-            line[1] = 'false'
-        w.writerow(line)
-
-    outfile.close()
+    # fh1 = open('kaggle/kaggle_test.csv', 'r')
+    # fh2 = open('pizza_request_dataset/pizza_request_dataset.csv', 'r')
+    # r1 = csv.reader(fh1)
+    # r2 = csv.reader(fh2)
+    # kaggle = {}
+    # for line in r1:
+    #     kaggle[line[0]] = line
+    #
+    # lines = []
+    # ids = []
+    # for line in r2:
+    #     if line[0] in kaggle:
+    #         lines.append(line)
+    #         ids.append(line[0])
+    #
+    # if len(lines) < len(kaggle):
+    #     for id in kaggle:
+    #         if not id in ids:
+    #             print("missing id: %s" % id)
+    #             lines.append(kaggle[id])
+    #
+    # fh1.close()
+    # fh2.close()
+    #
+    # outfile = open('kaggle/kaggle_test.csv', 'w', newline='')
+    # w = csv.writer(outfile)
+    # for i, line in enumerate(lines):
+    #     if i > 0:
+    #         line[1] = 'false'
+    #     w.writerow(line)
+    #
+    # outfile.close()
