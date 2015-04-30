@@ -113,7 +113,7 @@ def weightLabel(key):
 def threshLabel(key):
     return '%s_%s' % (key, C.THRESH)
     
-def serializeAgentFromLog(logfile, id):
+def deserializeAgentFromLog(logfile, id):
     fh = open(logfile, 'r')
     reader = csv.reader(fh)
     header = reader.__next__()
@@ -125,9 +125,9 @@ def serializeAgentFromLog(logfile, id):
     for field in ['ID', 'Gen', 'Score']:
         header.remove(field)
     
-    return serializeAgent(header, agent)
+    return deserializeAgent(header, agent)
     
-def serializeAgent(header, agent):
+def deserializeAgent(header, agent):
     id = agent[0]
     gen = agent[1]
     

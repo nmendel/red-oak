@@ -29,7 +29,7 @@ for i, agent in enumerate(reader):
     if i >= numAgents:
         break
     
-    agentObj = Agent.serializeAgent(header, agent)
+    agentObj = Agent.deserializeAgent(header, agent)
     score = GeneticAlgorithm.runAgentAgainstTest(agentObj, kaggleRequests, True)
     if score > bestScore:
         bestScore = score
